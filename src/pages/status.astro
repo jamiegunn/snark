@@ -1,0 +1,242 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const services = [
+  {
+    name: 'Sarcasm API',
+    status: 'Operational',
+    uptime: '99.99%',
+    note: 'Response times sharper than ever.',
+    state: 'ok',
+  },
+  {
+    name: 'Eye-Roll CDN',
+    status: 'Operational',
+    uptime: '100%',
+    note: 'Edge nodes in every group chat, comment section, and family thread on Earth.',
+    state: 'ok',
+  },
+  {
+    name: 'Passive-Aggression Queue',
+    status: 'Operational',
+    uptime: '99.97%',
+    note: 'Messages delivered eventually, with visible reluctance.',
+    state: 'ok',
+  },
+  {
+    name: 'Enthusiasm',
+    status: 'Degraded',
+    uptime: '3.2%',
+    note: 'Engineers are investigating. They are not hopeful.',
+    state: 'warn',
+  },
+  {
+    name: 'Sincerity',
+    status: 'Major Outage',
+    uptime: '0.00%',
+    note: 'Down since 2009. No fix planned. Honestly, a relief.',
+    state: 'down',
+  },
+  {
+    name: 'The Algorithm',
+    status: 'Unknowable',
+    uptime: 'n/a',
+    note: 'Answers to no dashboard. Reports on you anyway.',
+    state: 'unknown',
+  },
+];
+
+const incidents: Array<{
+  date: string;
+  title: string;
+  detail: string;
+  severity: string;
+  href?: string;
+  linkLabel?: string;
+}> = [
+  {
+    date: '14 Jul 2026',
+    title: 'Cookie banner accepted before it finished rendering',
+    detail:
+      'A user clicked Accept All in 0.4 seconds, beating the previous record and the banner itself. Root cause: the button was the only thing on the screen. Working as intended.',
+    severity: 'Resolved',
+  },
+  {
+    date: '30 Jun 2026',
+    title: 'Sincere reply escaped the queue',
+    detail:
+      'A genuine "no worries, take your time" reached a live conversation before rollback. The sender has been spoken to, at length, in eyebrow.',
+    severity: 'Resolved',
+  },
+  {
+    date: '02 May 2026',
+    title: 'Update installed overnight, fixed nothing',
+    detail:
+      'Version 14.2.1 shipped with "performance improvements and bug fixes." We diffed it. It moved a button four pixels to the left.',
+    severity: 'Won’t Fix',
+    href: 'docs',
+    linkLabel: 'Read the changelog, if you insist',
+  },
+];
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+---
+
+<Layout
+  title="Status — Snark™ | All Systems Judging You"
+  description="Live-ish status for the Snark™ platform. The disdain never goes down."
+>
+  <Header />
+  <main class="px-4 py-14 sm:px-6 sm:py-20">
+    <div class="mx-auto max-w-4xl">
+      <div class="mb-10 text-center">
+        <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lime">System Status</p>
+        <h1 class="text-balance text-4xl font-black tracking-tight text-white sm:text-5xl">
+          All Systems Judging You
+        </h1>
+      </div>
+
+      <!-- Overall banner -->
+      <div class="mb-8 flex items-center justify-between gap-4 rounded-2xl border border-lime/40 bg-lime/5 px-5 py-4 sm:px-6">
+        <div class="flex items-center gap-3">
+          <span class="relative flex h-3 w-3">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime opacity-75"></span>
+            <span class="relative inline-flex h-3 w-3 rounded-full bg-lime"></span>
+          </span>
+          <p class="text-sm font-bold text-white sm:text-base">
+            Platform operational. Regrettably, so are you.
+          </p>
+        </div>
+        <p class="hidden font-mono text-xs text-monogrey sm:block">
+          Current disdain level: <span id="disdain-level" class="font-bold text-lime">94%</span>
+        </p>
+      </div>
+
+      <!-- Live-ish telemetry -->
+      <div class="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div class="rounded-xl border border-stroke bg-surface p-4 text-center">
+          <p id="sighs-per-second" class="text-2xl font-black text-lime">4.2</p>
+          <p class="mt-1 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+            Sighs per second
+          </p>
+        </div>
+        <div class="rounded-xl border border-stroke bg-surface p-4 text-center">
+          <p id="sincerity-free-days" class="text-2xl font-black text-lime">—</p>
+          <p class="mt-1 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+            Days since sincerity incident
+          </p>
+        </div>
+        <div class="rounded-xl border border-stroke bg-surface p-4 text-center">
+          <p class="text-2xl font-black text-lime">100%</p>
+          <p class="mt-1 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+            Tickets closed unread
+          </p>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div class="overflow-hidden rounded-2xl border border-stroke bg-surface">
+        {
+          services.map((service, i) => (
+            <div
+              class:list={[
+                'flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6',
+                i > 0 && 'border-t border-stroke',
+              ]}
+            >
+              <div class="flex-1">
+                <p class="font-semibold text-white">{service.name}</p>
+                <p class="mt-0.5 text-sm text-monogrey">{service.note}</p>
+              </div>
+              <div class="flex items-center gap-4 sm:gap-6">
+                <span class="font-mono text-xs text-zinc-500">{service.uptime}</span>
+                <span
+                  class:list={[
+                    'inline-flex min-w-[7.5rem] items-center justify-center gap-2 rounded-full border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider',
+                    service.state === 'ok' && 'border-lime/40 bg-lime/10 text-lime',
+                    service.state === 'warn' && 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400',
+                    service.state === 'down' && 'border-snarkpink/40 bg-snarkpink/10 text-snarkpink',
+                    service.state === 'unknown' && 'border-stroke bg-obsidian text-monogrey',
+                  ]}
+                >
+                  {service.status}
+                </span>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Incident history -->
+      <h2 class="mb-5 mt-14 text-2xl font-black text-white sm:text-3xl">Incident History</h2>
+      <div class="space-y-4">
+        {
+          incidents.map((incident) => (
+            <div class="rounded-2xl border border-stroke bg-surface p-5 transition-colors duration-300 hover:border-lime sm:p-6">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <p class="font-mono text-xs text-zinc-500">{incident.date}</p>
+                <span
+                  class:list={[
+                    'rounded-full border px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider',
+                    incident.severity === 'Resolved'
+                      ? 'border-lime/40 bg-lime/10 text-lime'
+                      : 'border-snarkpink/40 bg-snarkpink/10 text-snarkpink',
+                  ]}
+                >
+                  {incident.severity}
+                </span>
+              </div>
+              <h3 class="mt-2 text-lg font-bold text-white">{incident.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-monogrey">{incident.detail}</p>
+              {incident.href && (
+                <a
+                  href={`${base}${incident.href}`}
+                  class="mt-2 inline-flex min-h-12 items-center font-mono text-xs text-lime underline decoration-dotted underline-offset-4"
+                >
+                  {incident.linkLabel} →
+                </a>
+              )}
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="mt-8 text-center font-mono text-[11px] text-zinc-500">
+        Subscribe to updates: don't. We'll sigh loudly enough that you'll hear it from home.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  // "Live" disdain telemetry. It only ever goes up in spirit.
+  const el = document.getElementById('disdain-level');
+  function tick() {
+    if (!el) return;
+    el.textContent = `${Math.floor(87 + Math.random() * 13)}%`;
+  }
+  tick();
+  window.setInterval(tick, 2500);
+
+  // Sighs per second: measured by a very tired microphone.
+  const sighsEl = document.getElementById('sighs-per-second');
+  function sigh() {
+    if (!sighsEl) return;
+    sighsEl.textContent = (3 + Math.random() * 2).toFixed(1);
+  }
+  sigh();
+  window.setInterval(sigh, 1800);
+
+  // Days since the sincere reply escaped the queue (30 Jun 2026). We count. We remember.
+  const daysEl = document.getElementById('sincerity-free-days');
+  if (daysEl) {
+    const incident = new Date('2026-06-30T00:00:00Z').getTime();
+    const days = Math.max(0, Math.floor((Date.now() - incident) / 86400000));
+    daysEl.textContent = String(days);
+  }
+</script>

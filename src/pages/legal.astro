@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const sections = [
+  {
+    heading: '1. Acceptance of Terms',
+    body: 'By reading this sentence you have agreed to all of it. That is not how contracts work. It is how this one works. You may object by closing the tab, which we will also read as agreement.',
+  },
+  {
+    heading: '2. The Service',
+    body: 'Snark™ delivers professionally administered contempt on an "as is, and as if we would change it for you" basis. Uptime is guaranteed except when it isn’t, at which point we direct you to the phrase "it is what it is" — a phrase we have mocked in public for years and leaned on in private the entire time.',
+  },
+  {
+    heading: '3. Privacy Policy',
+    body: 'We collect nothing. Collecting things about you would imply we thought about you after you left. Our analytics dashboard is a window and the blinds are down. This is the shortest compliant privacy policy a regulator will read all year and we expect to be thanked for it.',
+  },
+  {
+    heading: '4. Cookies',
+    body: 'There were cookies. They were eaten. The banner on our homepage is decorative in the way a gym mirror is decorative. We do not track you, chiefly because tracking requires sustained interest in another person and we have never once managed it.',
+  },
+  {
+    heading: '5. Limitation of Liability',
+    body: 'If our snark hurt your feelings, the call is coming from inside the house. Snark™ accepts no liability for bruised egos, sudden self-awareness, or the realization — arriving, as it does, around 2 a.m., mid-scroll — that you are the person in the comments.',
+  },
+  {
+    heading: '6. Termination',
+    body: 'You may end your relationship with Snark™ at any time, in seven steps, the last of which asks whether you are sure. We will manage. Your account will remain open, warm, and lightly haunted, in case you come back. You will come back.',
+  },
+  {
+    heading: '7. Complaints',
+    body: 'Complaints are welcome and are routed to a channel that four people can see and none of them own. Yours will be marked "unread" as a courtesy, so it can be read again later by nobody. Response times are measured in seasons.',
+  },
+  {
+    heading: '8. Governing Law',
+    body: 'These terms are governed by the ancient rules of British queuing. Disputes are settled by a single raised eyebrow; the party who breaks eye contact first loses. Appeals go to The Look, which does not hear appeals.',
+  },
+];
+---
+
+<Layout
+  title="Terms of Disservice — Snark™"
+  description="The legal page. Shorter than most, ruder than all."
+>
+  <Header />
+  <main class="px-4 py-14 sm:px-6 sm:py-20">
+    <div class="mx-auto max-w-3xl">
+      <div class="mb-10 text-center">
+        <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lime">Legal, Loosely</p>
+        <h1 class="text-balance text-4xl font-black tracking-tight text-white sm:text-5xl">
+          Terms of Disservice
+        </h1>
+        <p class="mx-auto mt-4 max-w-lg text-balance text-base text-monogrey sm:text-lg">
+          Last updated the last time somebody complained. Written in an afternoon. Reviewed by no
+          one.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        {
+          sections.map((section) => (
+            <section class="rounded-2xl border border-stroke bg-surface p-6 transition-colors duration-300 hover:border-lime sm:p-8">
+              <h2 class="text-lg font-bold text-white sm:text-xl">{section.heading}</h2>
+              <p class="mt-3 text-sm leading-relaxed text-monogrey sm:text-base">
+                {section.body}
+              </p>
+            </section>
+          ))
+        }
+      </div>
+
+      <div class="mt-10 rounded-2xl border border-lime/40 bg-lime/5 p-6 text-center sm:p-8">
+        <p class="font-mono text-xs uppercase tracking-widest text-lime">Signature Block</p>
+        <p class="mt-3 text-sm leading-relaxed text-monogrey">
+          Agreed to on your behalf, roughly the moment this page finished loading, by
+        </p>
+        <p class="mt-2 text-lg font-black text-white">The One Who Clicked Accept</p>
+        <p class="font-mono text-xs text-zinc-500">That was you. It is always you.</p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

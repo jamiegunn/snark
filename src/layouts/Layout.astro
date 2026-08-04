@@ -1,0 +1,262 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Snark™ — Because Sincerity Was Getting Exhausting',
+  description =
+    'Snark™ is the world\'s first Sarcasm-as-a-Service platform. Enterprise-grade passive aggression, dry realism, and eye-rolls delivered at scale. Now 40% more passive-aggressive.',
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const ogImage = new URL(`${base}og-image.png`, Astro.site ?? Astro.url);
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0F0F11" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- OpenGraph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Snark™" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="min-h-screen bg-obsidian font-sans text-zinc-200 antialiased selection:bg-lime selection:text-obsidian"
+  >
+    <!-- Scroll progress: how close you are to being done with us -->
+    <div
+      id="scroll-progress"
+      class="fixed inset-x-0 top-0 z-[70] h-0.5 origin-left scale-x-0 bg-gradient-to-r from-lime to-snarkpink"
+      aria-hidden="true"
+    >
+    </div>
+
+    <!-- Subtle grid texture, because every serious SaaS has one -->
+    <div
+      class="pointer-events-none fixed inset-0 z-0 opacity-[0.04]"
+      style="background-image: linear-gradient(#A1A1AA 1px, transparent 1px), linear-gradient(90deg, #A1A1AA 1px, transparent 1px); background-size: 48px 48px;"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="relative z-10">
+      <slot />
+    </div>
+
+    <!-- Back to top, since you've clearly given up down here -->
+    <button
+      id="back-to-top"
+      type="button"
+      class="pointer-events-none fixed bottom-24 right-4 z-40 flex min-h-12 items-center gap-2 rounded-xl border border-stroke bg-surface/95 px-4 font-mono text-xs font-bold text-monogrey opacity-0 backdrop-blur-md transition-all duration-300 hover:border-lime hover:text-lime active:scale-95 sm:right-6"
+      aria-label="Scroll back to top"
+    >
+      ↑ Crawl back up
+    </button>
+  </body>
+</html>
+
+<style is:global>
+  /* Scrollbar in house colors. Yes, we styled the scrollbar. We contain multitudes of contempt. */
+  html {
+    scrollbar-color: #27272a #0f0f11;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f0f11;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 8px;
+    border: 2px solid #0f0f11;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a3e635;
+  }
+
+  /* Scroll-reveal: content earns its entrance */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.6s ease-out,
+      transform 0.6s ease-out;
+  }
+  [data-reveal].revealed {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Spotlight hover: a lime glow that follows your cursor around, judging it */
+  .spotlight {
+    position: relative;
+  }
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    background: radial-gradient(
+      340px circle at var(--sx, 50%) var(--sy, 50%),
+      rgba(163, 230, 53, 0.09),
+      transparent 65%
+    );
+  }
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // ── Scroll progress + back-to-top ──
+  const bar = document.getElementById('scroll-progress');
+  const toTop = document.getElementById('back-to-top');
+
+  function onScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    if (bar) bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+    if (toTop) {
+      const show = window.scrollY > 600;
+      toTop.classList.toggle('opacity-0', !show);
+      toTop.classList.toggle('pointer-events-none', !show);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  toTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // ── Scroll-reveal observer ──
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          io.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+  document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+  // ── Spotlight cards ──
+  document.querySelectorAll<HTMLElement>('.spotlight').forEach((card) => {
+    card.addEventListener('mousemove', (ev: MouseEvent) => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--sx', `${ev.clientX - rect.left}px`);
+      card.style.setProperty('--sy', `${ev.clientY - rect.top}px`);
+    });
+  });
+
+  // ── The tab misses you. Passive-aggressively. ──
+  const realTitle = document.title;
+  document.addEventListener('visibilitychange', () => {
+    document.title = document.hidden ? 'Come back. Or don’t. — Snark™' : realTitle;
+  });
+
+  // ── Shared toast for global mischief ──
+  let globalToast: HTMLDivElement | null = null;
+  let globalToastTimer = 0;
+  function announce(message: string) {
+    if (!globalToast) {
+      globalToast = document.createElement('div');
+      globalToast.setAttribute('role', 'status');
+      globalToast.style.cssText =
+        'position:fixed;bottom:96px;left:50%;transform:translateX(-50%);z-index:85;' +
+        'background:#18181B;border:1px solid #A3E635;color:#E4E4E7;padding:12px 20px;' +
+        'border-radius:12px;font-family:ui-monospace,monospace;font-size:13px;' +
+        'box-shadow:0 0 24px rgba(163,230,53,.25);opacity:0;transition:opacity .3s;' +
+        'pointer-events:none;max-width:90vw;text-align:center;';
+      document.body.appendChild(globalToast);
+    }
+    globalToast.textContent = message;
+    requestAnimationFrame(() => {
+      if (globalToast) globalToast.style.opacity = '1';
+    });
+    window.clearTimeout(globalToastTimer);
+    globalToastTimer = window.setTimeout(() => {
+      if (globalToast) globalToast.style.opacity = '0';
+    }, 2600);
+  }
+
+  // ── The Konami code turns every notification back on. Obviously. ──
+  const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let konamiIndex = 0;
+  let stampedeActive = false;
+
+  function stampede() {
+    if (stampedeActive) return;
+    stampedeActive = true;
+    announce('All notifications re-enabled. Every single one. This is on you.');
+    const style = document.createElement('style');
+    style.textContent =
+      '@keyframes bell-fall { from { transform: translateY(-10vh) rotate(0deg); } to { transform: translateY(110vh) rotate(360deg); } }';
+    document.head.appendChild(style);
+    const bells: HTMLSpanElement[] = [];
+    for (let i = 0; i < 36; i++) {
+      const bell = document.createElement('span');
+      bell.textContent = '🔔';
+      const size = 20 + Math.random() * 36;
+      bell.style.cssText =
+        `position:fixed;top:0;left:${Math.random() * 100}vw;z-index:84;pointer-events:none;` +
+        `font-size:${size}px;animation:bell-fall ${2.4 + Math.random() * 3.2}s linear ${Math.random() * 2.2}s forwards;`;
+      document.body.appendChild(bell);
+      bells.push(bell);
+    }
+    window.setTimeout(() => {
+      bells.forEach((bell) => bell.remove());
+      style.remove();
+      stampedeActive = false;
+    }, 8000);
+  }
+
+  document.addEventListener('keydown', (event) => {
+    const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+    konamiIndex = key === KONAMI[konamiIndex] ? konamiIndex + 1 : key === KONAMI[0] ? 1 : 0;
+    if (konamiIndex === KONAMI.length) {
+      konamiIndex = 0;
+      stampede();
+    }
+  });
+</script>

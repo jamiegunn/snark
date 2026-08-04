@@ -1,0 +1,84 @@
+---
+// The Wall of Mild Praise — real reviews, proudly framed at their original rating.
+const reviews = [
+  {
+    stars: 1,
+    quote: 'Made me feel seen, then judged for what it saw. Subscribed immediately.',
+    name: 'Verified Purchaser',
+    org: 'Reviewed from a parking lot',
+  },
+  {
+    stars: 2,
+    quote: 'Two stars. One for accuracy, one so it doesn’t get a big head.',
+    name: 'Leaves Two Stars, Always',
+    org: 'Has never once left three',
+  },
+  {
+    stars: 1,
+    quote: 'I asked it to help me write this review. It wrote this review. I am not happy about it.',
+    name: 'Definitely A Real Person',
+    org: 'Account created four minutes ago',
+  },
+  {
+    stars: 5,
+    quote: 'Five stars, by accident. I was aiming for one. The button is nine hundred pixels wide.',
+    name: 'Big Thumbs, Small Phone',
+    org: 'Sent from my device',
+  },
+  {
+    stars: 1,
+    quote: 'It called my smart home "a group chat between the lights." The lights have not recovered.',
+    name: 'Owns Nine Hubs',
+    org: 'None of them speak to each other',
+  },
+  {
+    stars: 2,
+    quote: 'The family group chat is now entirely generated comebacks. Dinner is quieter. Sharper, but quieter.',
+    name: 'Group Chat Admin',
+    org: 'Muted by four of six members',
+  },
+];
+---
+
+<section id="praise" class="px-4 py-16 sm:px-6 sm:py-24">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-10 text-center sm:mb-14" data-reveal>
+      <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lime">
+        Testimonials, Regrettably
+      </p>
+      <h2 class="text-3xl font-black tracking-tight text-white sm:text-4xl">
+        The Wall of Mild Praise
+      </h2>
+      <p class="mx-auto mt-3 max-w-lg text-sm text-monogrey sm:text-base">
+        Every review verified — in the sense that we read them aloud in a mocking voice.
+      </p>
+    </div>
+
+    <!-- 1 col mobile → 2 col tablet → 3 col desktop -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal>
+      {
+        reviews.map((review) => (
+          <figure class="spotlight flex flex-col rounded-2xl border border-stroke bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-lime">
+            <div class="mb-3 flex items-center gap-1 font-mono text-sm" aria-label={`${review.stars} out of 5 stars`}>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span class={i < review.stars ? 'text-lime' : 'text-stroke'}>★</span>
+              ))}
+              <span class="ml-2 text-[11px] text-zinc-500">{review.stars}/5, cherished</span>
+            </div>
+            <blockquote class="flex-1 text-sm leading-relaxed text-zinc-300 sm:text-base">
+              “{review.quote}”
+            </blockquote>
+            <figcaption class="mt-4 border-t border-stroke pt-4">
+              <p class="text-sm font-bold text-white">{review.name}</p>
+              <p class="font-mono text-xs text-zinc-500">{review.org}</p>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <p class="mt-8 text-center font-mono text-[11px] text-zinc-500" data-reveal>
+      Average rating: 2.0 — our highest ever. The team celebrated with a brief nod.
+    </p>
+  </div>
+</section>

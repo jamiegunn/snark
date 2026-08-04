@@ -1,0 +1,758 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// ── The spec ──────────────────────────────────────────────────────────────
+// Shaped like an OpenAPI document because the joke only lands if the
+// scaffolding is convincing. None of it is served by anything. All of it is
+// documented to a standard the actual internet rarely manages.
+const servers = [
+  { url: 'https://api.snark.example/v1', label: 'Production — as reliable as any' },
+  { url: 'https://staging.snark.example/v1', label: 'Staging — identical, but more confident' },
+  { url: 'http://localhost:3000/v1', label: 'Local — yours. We are not looking.' },
+];
+
+const operations = [
+  {
+    id: 'dispatchEyeroll',
+    method: 'POST',
+    path: '/v1/eyeroll',
+    tag: 'Expressions',
+    summary: 'Dispatch a single eye-roll',
+    desc: 'Sends one eye-roll to the specified target. Intensity above 90 requires a signed waiver from your optometrist. Delivery is instant; acknowledgement is never.',
+    params: [],
+    schema: [
+      ['intensity', 'integer', true, '0–100. Values above 90 are dispatched but disclaimed.'],
+      ['target', 'string', true, 'What earned it. Be specific — vagueness reads as cowardice.'],
+      ['audible', 'boolean', false, 'Adds the sigh. Defaults to true, because it always was.'],
+    ],
+    example: '{\n  "intensity": 75,\n  "target": "the fourth cookie banner today",\n  "audible": true\n}',
+    responses: [
+      ['200', 'Rolled. Nobody saw it, which is the point.'],
+      ['400', "That's On You — intensity outside 0–100."],
+      ['429', 'Too Many Feelings — you are rolling faster than we can render.'],
+    ],
+  },
+  {
+    id: 'streamSigh',
+    method: 'GET',
+    path: '/v1/sigh',
+    tag: 'Expressions',
+    summary: 'Stream a sigh of configurable depth',
+    desc: 'Returns a sigh over Server-Sent Exhales. The connection stays open slightly longer than is comfortable, which is a feature and was expensive to build.',
+    params: [
+      ['depth', 'query', 'string', false, 'One of shallow, weary, existential. Defaults to weary.'],
+      ['audible', 'query', 'boolean', false, 'Whether anyone nearby should have to hear it.'],
+    ],
+    schema: null,
+    example: null,
+    responses: [
+      ['200', 'Exhaled. Duration scales with depth.'],
+      ['429', 'Too Many Feelings — take a walk. Reflect.'],
+    ],
+  },
+  {
+    id: 'generateComeback',
+    method: 'POST',
+    path: '/v1/comeback',
+    tag: 'Language',
+    summary: 'Generate the comeback you thought of too late',
+    desc: 'Produces the reply that would have ended the conversation, timed to arrive after it. The delay is not a latency problem. The delay is the product.',
+    params: [],
+    schema: [
+      ['setup', 'string', true, 'What they said. Paste it exactly; paraphrasing flatters them.'],
+      ['delay', 'string', false, 'Requested delivery time. Accepted, logged, and ignored.'],
+      ['swallow', 'boolean', false, 'If true, you keep it to yourself. Defaults to true.'],
+    ],
+    example: '{\n  "setup": "Are you still watching?",\n  "swallow": true\n}',
+    responses: [
+      ['200', 'Generated. Arriving in roughly three hours.'],
+      ['402', 'Payment Required — comebacks over twelve words are a paid tier.'],
+      ['429', 'Too Many Feelings — one conversation at a time.'],
+    ],
+  },
+  {
+    id: 'deleteEnthusiasm',
+    method: 'DELETE',
+    path: '/v1/enthusiasm',
+    tag: 'Maintenance',
+    summary: 'Remove enthusiasm from the session',
+    desc: 'Idempotent. Calling it twice changes nothing, because there was nothing left after the first time. Calling it once changes nothing either, for the same reason.',
+    params: [],
+    schema: null,
+    example: null,
+    responses: [
+      ['200', 'Already gone. Has been since 2009.'],
+      ['204', 'No Comment — we saw the request and have nothing nice to say.'],
+    ],
+  },
+  {
+    id: 'requestUnsubscribe',
+    method: 'DELETE',
+    path: '/v1/unsubscribe',
+    tag: 'Compliance',
+    summary: 'Remove yourself from all communications',
+    desc: 'Present for compliance reasons, and for no other reason whatsoever. Returns 200 in every case. The value of removed is documented below and is always false.',
+    params: [
+      ['confirm', 'query', 'boolean', true, 'Must be true. Will not be read.'],
+      ['reason', 'query', 'string', false, 'Why you are leaving. Goes to a channel with no owner.'],
+    ],
+    schema: null,
+    example: null,
+    responses: [
+      ['200', 'Received. Nothing further will happen.'],
+      ['429', 'Too Many Feelings — you have tried this before.'],
+    ],
+  },
+];
+
+const errors = [
+  ['200', 'Fine.', 'The request worked. Try not to make it weird.'],
+  ['204', 'No Comment', 'We saw it. We have nothing nice to say.'],
+  ['400', "That's On You", 'The request was malformed, much like the idea behind it.'],
+  ['401', 'Who Are You, Even', 'Missing or unconvincing credentials. There is a button for this.'],
+  ['402', 'Payment Required', 'Your card was declined. So, in fairness, was your idea.'],
+  ['418', "I'm a Teapot", 'Preserved out of respect. The only sincere thing in this spec.'],
+  ['429', 'Too Many Feelings', 'Rate limited. Take a walk. Reflect.'],
+  ['500', "We're Not Mad, Just Disappointed", 'Something broke on our end. We blame you anyway.'],
+];
+
+const methodClass = {
+  GET: 'border-lime/40 bg-lime/10 text-lime',
+  POST: 'border-sky-500/40 bg-sky-500/10 text-sky-400',
+  DELETE: 'border-snarkpink/40 bg-snarkpink/10 text-snarkpink',
+};
+---
+
+<Layout
+  title="API Docs — Snark™ | Condescension, Programmatically"
+  description="The Snark™ REST API: eye-rolls, sighs, and comebacks over HTTPS. Try any endpoint live — the interface is real, the API is not."
+>
+  <Header />
+  <main class="px-4 py-14 sm:px-6 sm:py-20">
+    <div class="mx-auto max-w-4xl">
+      <div class="mb-10 text-center">
+        <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lime">API Reference</p>
+        <h1 class="text-balance text-4xl font-black tracking-tight text-white sm:text-5xl">
+          Condescension, Programmatically
+        </h1>
+        <p class="mx-auto mt-4 max-w-xl text-balance text-base text-monogrey sm:text-lg">
+          REST, because we need it after talking to you. Every endpoint below is fully
+          interactive and completely fictional — which, if you have used an API recently,
+          may not feel like much of a distinction.
+        </p>
+        <p class="mt-4 font-mono text-[11px] text-zinc-600">
+          OpenAPI 3.1 · snark-api v2.0 · nothing leaves this page
+        </p>
+      </div>
+
+      <!-- ── Toolbar: server + auth ─────────────────────────────────── -->
+      <section class="mb-8 rounded-2xl border border-stroke bg-surface p-5 sm:p-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <label class="flex-1">
+            <span class="mb-1.5 block font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+              Server
+            </span>
+            <select
+              id="server-select"
+              class="min-h-12 w-full rounded-xl border border-stroke bg-obsidian px-3 font-mono text-xs text-zinc-200 transition-colors duration-200 focus:border-lime focus:outline-none focus:ring-1 focus:ring-lime sm:text-sm"
+            >
+              {servers.map((s) => <option value={s.url}>{s.url} — {s.label}</option>)}
+            </select>
+          </label>
+          <button
+            id="authorize-btn"
+            type="button"
+            class="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-stroke bg-obsidian px-5 text-sm font-bold text-monogrey transition-colors duration-200 hover:border-lime hover:text-lime active:scale-95"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <rect x="4" y="10" width="16" height="10" rx="2" />
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            </svg>
+            <span id="authorize-label">Authorize</span>
+          </button>
+        </div>
+        <p id="auth-note" class="mt-3 font-mono text-[11px] text-zinc-600">
+          Not authorized. Endpoints will refuse you politely, then keep refusing.
+        </p>
+      </section>
+
+      <!-- ── Operations ─────────────────────────────────────────────── -->
+      <h2 class="mb-4 text-2xl font-black text-white sm:text-3xl">Endpoints</h2>
+      <div class="space-y-4">
+        {
+          operations.map((op) => (
+            <details class="op group overflow-hidden rounded-2xl border border-stroke bg-surface transition-colors duration-300 open:border-lime/40" data-op={op.id}>
+              <summary class="flex min-h-14 cursor-pointer list-none items-center gap-3 px-4 py-3 transition-colors duration-200 hover:bg-obsidian/40 sm:px-5">
+                <span class:list={['shrink-0 rounded-lg border px-2.5 py-1 font-mono text-[11px] font-bold', methodClass[op.method]]}>
+                  {op.method}
+                </span>
+                <code class="font-mono text-sm font-bold text-white">{op.path}</code>
+                <span class="ml-auto hidden text-right text-xs text-monogrey sm:block">{op.summary}</span>
+                <svg class="h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-300 group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </summary>
+
+              <div class="border-t border-stroke px-4 py-5 sm:px-5">
+                <p class="text-sm leading-relaxed text-monogrey">{op.desc}</p>
+                <p class="mt-2 font-mono text-[11px] text-zinc-600">
+                  operationId: {op.id} · tag: {op.tag}
+                </p>
+
+                {/* Parameters */}
+                <h3 class="mt-6 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+                  Parameters
+                </h3>
+                {op.params.length === 0 ? (
+                  <p class="mt-2 text-sm text-zinc-600">No parameters. There is nothing to configure and nothing to blame.</p>
+                ) : (
+                  <div class="mt-2 space-y-2">
+                    {op.params.map(([name, loc, type, required, desc]) => (
+                      <div class="rounded-xl border border-stroke bg-obsidian p-3">
+                        <div class="flex flex-wrap items-baseline gap-x-2">
+                          <code class="font-mono text-xs font-bold text-lime">{name}</code>
+                          <span class="font-mono text-[11px] text-zinc-500">{type}</span>
+                          <span class="font-mono text-[11px] text-zinc-600">({loc})</span>
+                          {required && <span class="font-mono text-[11px] font-bold text-snarkpink">required</span>}
+                        </div>
+                        <p class="mt-1 text-xs leading-relaxed text-monogrey">{desc}</p>
+                        <input
+                          type="text"
+                          class="param-input mt-2 min-h-12 w-full rounded-lg border border-stroke bg-surface px-3 font-mono text-xs text-zinc-200 placeholder:text-zinc-600 transition-colors duration-200 focus:border-lime focus:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+                          data-param={name}
+                          placeholder={type === 'boolean' ? 'true' : type}
+                          disabled
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Request body */}
+                {op.schema && (
+                  <>
+                    <h3 class="mt-6 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+                      Request body · application/json
+                    </h3>
+                    <div class="mt-2 overflow-hidden rounded-xl border border-stroke">
+                      {op.schema.map(([name, type, required, desc], i) => (
+                        <div class:list={['bg-obsidian px-3 py-2.5', i > 0 && 'border-t border-stroke']}>
+                          <div class="flex flex-wrap items-baseline gap-x-2">
+                            <code class="font-mono text-xs font-bold text-lime">{name}</code>
+                            <span class="font-mono text-[11px] text-zinc-500">{type}</span>
+                            {required && <span class="font-mono text-[11px] font-bold text-snarkpink">required</span>}
+                          </div>
+                          <p class="mt-0.5 text-xs leading-relaxed text-monogrey">{desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <textarea
+                      class="body-input mt-3 w-full rounded-xl border border-stroke bg-obsidian p-3 font-mono text-xs leading-relaxed text-zinc-300 transition-colors duration-200 focus:border-lime focus:outline-none focus:ring-1 focus:ring-lime disabled:cursor-not-allowed disabled:opacity-40"
+                      rows="5"
+                      spellcheck="false"
+                      disabled
+                      data-default={op.example}
+                    >{op.example}</textarea>
+                  </>
+                )}
+
+                {/* Controls */}
+                <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+                  <button
+                    type="button"
+                    class="try-btn flex min-h-12 items-center justify-center rounded-xl border border-stroke bg-obsidian px-5 text-sm font-bold text-monogrey transition-colors duration-200 hover:border-lime hover:text-lime active:scale-95"
+                  >
+                    Try it out
+                  </button>
+                  <button
+                    type="button"
+                    class="exec-btn hidden min-h-12 flex-1 items-center justify-center rounded-xl bg-lime px-6 text-sm font-bold text-obsidian transition-all duration-200 hover:bg-lime-glow active:scale-95 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    Execute
+                  </button>
+                </div>
+
+                {/* Documented responses */}
+                <h3 class="mt-6 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+                  Responses
+                </h3>
+                <div class="mt-2 overflow-hidden rounded-xl border border-stroke">
+                  {op.responses.map(([code, desc], i) => (
+                    <div class:list={['flex gap-3 bg-obsidian px-3 py-2.5', i > 0 && 'border-t border-stroke']}>
+                      <code
+                        class:list={[
+                          'shrink-0 font-mono text-xs font-bold',
+                          code.startsWith('2') ? 'text-lime' : code.startsWith('4') ? 'text-yellow-400' : 'text-snarkpink',
+                        ]}
+                      >
+                        {code}
+                      </code>
+                      <p class="text-xs leading-relaxed text-monogrey">{desc}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Live result */}
+                <div class="result mt-6 hidden"></div>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+
+      <!-- ── Status codes ───────────────────────────────────────────── -->
+      <h2 class="mb-5 mt-14 text-2xl font-black text-white sm:text-3xl">Status Codes</h2>
+      <div class="overflow-hidden rounded-2xl border border-stroke bg-surface">
+        {
+          errors.map(([code, name, desc], i) => (
+            <div
+              class:list={[
+                'flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:gap-6 sm:px-6',
+                i > 0 && 'border-t border-stroke',
+              ]}
+            >
+              <code
+                class:list={[
+                  'shrink-0 font-mono text-sm font-bold sm:w-12',
+                  code.startsWith('2') ? 'text-lime' : code.startsWith('4') ? 'text-yellow-400' : 'text-snarkpink',
+                ]}
+              >
+                {code}
+              </code>
+              <p class="shrink-0 text-sm font-bold text-white sm:w-64">{name}</p>
+              <p class="text-sm text-monogrey">{desc}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- ── SDKs + changelog ───────────────────────────────────────── -->
+      <div class="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <section class="rounded-2xl border border-stroke bg-surface p-6">
+          <h2 class="text-xl font-black text-white">Official SDKs</h2>
+          <p class="mt-2 text-sm leading-relaxed text-monogrey">
+            Available in JavaScript, Python, and Sighs. The Sighs SDK is just a WAV file,
+            and honestly it's our most expressive one.
+          </p>
+        </section>
+        <section class="rounded-2xl border border-stroke bg-surface p-6">
+          <h2 class="text-xl font-black text-white">Changelog</h2>
+          <ul class="mt-2 space-y-2 text-sm leading-relaxed text-monogrey">
+            <li>
+              <span class="font-mono text-xs text-lime">v2.0</span> — 40% more
+              passive-aggressive. You're welcome.
+            </li>
+            <li>
+              <span class="font-mono text-xs text-lime">v1.4</span> — Fixed a bug where
+              compliments could occur.
+            </li>
+            <li>
+              <span class="font-mono text-xs text-lime">v1.0</span> — Initial release.
+              Regretted immediately.
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <p class="mt-10 text-center font-mono text-[11px] text-zinc-500">
+        Questions? See status code 204.
+      </p>
+    </div>
+  </main>
+
+  <!-- ── Authorize modal ──────────────────────────────────────────── -->
+  <div
+    id="auth-modal"
+    class="fixed inset-0 z-[60] hidden items-center justify-center bg-obsidian/80 p-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="auth-title"
+  >
+    <div class="w-full max-w-md rounded-2xl border border-stroke bg-surface p-6">
+      <h2 id="auth-title" class="text-xl font-black text-white">Available authorizations</h2>
+      <p class="mt-2 text-sm leading-relaxed text-monogrey">
+        Bearer token. We'll bear it, reluctantly. Any value is accepted — we are not
+        checking, we simply require that you go through the motions, like everyone else.
+      </p>
+      <label class="mt-5 block">
+        <span class="mb-1.5 block font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+          apiKey · header · Authorization
+        </span>
+        <input
+          id="auth-input"
+          type="text"
+          spellcheck="false"
+          placeholder="sk_disdain_51mUl4t3d"
+          class="min-h-12 w-full rounded-xl border border-stroke bg-obsidian px-4 font-mono text-sm text-zinc-200 placeholder:text-zinc-600 transition-colors duration-200 focus:border-lime focus:outline-none focus:ring-1 focus:ring-lime"
+        />
+      </label>
+      <p id="auth-error" class="mt-2 hidden font-mono text-[11px] text-snarkpink"></p>
+      <div class="mt-5 flex flex-col gap-2 sm:flex-row">
+        <button
+          id="auth-submit"
+          type="button"
+          class="flex min-h-12 flex-1 items-center justify-center rounded-xl bg-lime px-5 text-sm font-bold text-obsidian transition-all duration-200 hover:bg-lime-glow active:scale-95"
+        >
+          Authorize
+        </button>
+        <button
+          id="auth-close"
+          type="button"
+          class="flex min-h-12 items-center justify-center rounded-xl border border-stroke bg-obsidian px-5 text-sm font-semibold text-monogrey transition-colors duration-200 hover:border-snarkpink hover:text-snarkpink active:scale-95"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
+
+<script>
+  // ── The engine ──────────────────────────────────────────────────────────
+  // Everything below runs in your browser. No request is made, which makes
+  // this the most reliable API you will use today.
+
+  type Ctx = { body: any; params: Record<string, string>; server: string };
+
+  const state = { token: '', server: '' };
+  const recent: number[] = [];
+
+  const REQUEST_IDS = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  function reqId(): string {
+    let s = '';
+    for (let i = 0; i < 16; i += 1) {
+      s += REQUEST_IDS[Math.floor(Math.random() * REQUEST_IDS.length)];
+    }
+    return `req_${s}`;
+  }
+
+  function pick<T>(arr: T[]): T {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // ── Responders. Each returns [statusCode, statusText, payload] ──────────
+  const RESPONDERS: Record<string, (ctx: Ctx) => [number, string, any]> = {
+    dispatchEyeroll(ctx) {
+      const intensity = Number(ctx.body?.intensity ?? 75);
+      if (Number.isNaN(intensity) || intensity < 0 || intensity > 100) {
+        return [400, "That's On You", {
+          error: 'intensity_out_of_range',
+          message: 'Intensity must be between 0 and 100. Yours was ' + ctx.body?.intensity + ', which is a mood, not a value.',
+        }];
+      }
+      const target = String(ctx.body?.target ?? 'nothing in particular');
+      const audible = ctx.body?.audible !== false;
+      return [200, 'Fine.', {
+        status: 'rolled',
+        target,
+        rotation_deg: Math.round(180 + intensity * 1.6),
+        audible,
+        witnessed_by: 0,
+        anyone_noticed: false,
+        note: intensity > 90
+          ? 'Dispatched. Your optometrist has been cc’d and is not pleased.'
+          : 'Dispatched. It landed somewhere behind them and slightly to the left.',
+      }];
+    },
+
+    streamSigh(ctx) {
+      const depth = (ctx.params.depth || 'weary').toLowerCase();
+      const known: Record<string, number> = { shallow: 900, weary: 2600, existential: 4200 };
+      const duration = known[depth] ?? 2600;
+      return [200, 'Fine.', {
+        duration_ms: duration,
+        depth: known[depth] ? depth : 'weary',
+        audible: ctx.params.audible === 'true',
+        transport: 'server-sent exhales',
+        message: depth === 'existential'
+          ? 'It’s fine. Everything is fine. It has been fine for some time now.'
+          : 'It’s fine. Everything is fine.',
+        ...(known[depth] ? {} : { warning: `Unknown depth "${ctx.params.depth}". Substituted weary, which covers most of it.` }),
+      }];
+    },
+
+    generateComeback(ctx) {
+      const setup = String(ctx.body?.setup ?? '').trim();
+      if (!setup) {
+        return [400, "That's On You", {
+          error: 'missing_setup',
+          message: 'No setup provided. We cannot beat something with nothing, though we admire the attempt.',
+        }];
+      }
+      const words = setup.split(/\s+/).length;
+      if (words > 12) {
+        return [402, 'Payment Required', {
+          error: 'tier_required',
+          message: `Setups over twelve words are a paid feature. Yours ran to ${words}, which is itself the problem.`,
+          upgrade: 'Withering, $1,499 a month',
+        }];
+      }
+      const comebacks = [
+        'You tell me. You’re the one taking notes.',
+        'That’s a lot of words for "no."',
+        'I heard you. That was the disappointing part.',
+        'Bold of you to say that out loud, in front of witnesses.',
+        'Sure. Let’s go with that.',
+      ];
+      return [200, 'Fine.', {
+        setup,
+        comeback: pick(comebacks),
+        swallowed: ctx.body?.swallow !== false,
+        delivered_at: 'three hours from now, in the shower',
+        regret_eta: '3h',
+        confidence: 0.41,
+      }];
+    },
+
+    deleteEnthusiasm() {
+      return [200, 'Fine.', {
+        status: 'already_gone',
+        since: '2009',
+        removed: 0,
+        note: 'Idempotent. Nothing happened, and nothing happened the first time either.',
+      }];
+    },
+
+    requestUnsubscribe(ctx) {
+      if (ctx.params.confirm !== 'true') {
+        return [400, "That's On You", {
+          error: 'confirmation_required',
+          message: 'confirm must be true. It will not be read, but it must be true.',
+        }];
+      }
+      return [200, 'Fine.', {
+        status: 'received',
+        removed: false,
+        reason_logged: ctx.params.reason ? String(ctx.params.reason) : null,
+        channel: 'a channel nobody has opened since 2019',
+        next_email: 'tomorrow, 6:04 a.m.',
+      }];
+    },
+  };
+
+  // ── The occasional refusal ──────────────────────────────────────────────
+  const REFUSALS: Array<[number, string, any]> = [
+    [429, 'Too Many Feelings', {
+      error: 'rate_limited',
+      message: 'You are making requests faster than we can care about them. Take a walk. Reflect.',
+      retry_after: '60s, or whenever you have calmed down',
+    }],
+    [402, 'Payment Required', {
+      error: 'payment_required',
+      message: 'This request succeeded and then thought better of it. Upgrade to have it succeed out loud.',
+      upgrade: 'Withering, $1,499 a month',
+    }],
+  ];
+
+  function headersFor(code: number, ms: number): Array<[string, string]> {
+    const remaining = Math.max(0, 60 - recent.length);
+    return [
+      ['content-type', 'application/json; charset=utf-8'],
+      ['x-request-id', reqId()],
+      ['x-ratelimit-limit', '60'],
+      ['x-ratelimit-remaining', code === 429 ? '0' : String(remaining)],
+      ['x-response-time', `${ms}ms`],
+      ['x-regret', code < 300 ? 'pending' : 'immediate'],
+      ['server', 'snark/2.0 (unbothered)'],
+    ];
+  }
+
+  function esc(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function curlFor(method: string, url: string, body: string | null): string {
+    let out = `curl -X ${method} "${url}"`;
+    out += ` \\\n  -H "Authorization: Bearer ${state.token || '<no token>'}"`;
+    if (body) {
+      out += ` \\\n  -H "Content-Type: application/json"`;
+      out += ` \\\n  -d '${body.replace(/\s*\n\s*/g, ' ')}'`;
+    }
+    return out;
+  }
+
+  // ── Wiring ──────────────────────────────────────────────────────────────
+  const serverSelect = document.getElementById('server-select') as HTMLSelectElement | null;
+  state.server = serverSelect?.value || '';
+  serverSelect?.addEventListener('change', () => {
+    state.server = serverSelect.value;
+  });
+
+  // Authorize modal
+  const modal = document.getElementById('auth-modal');
+  const authBtn = document.getElementById('authorize-btn');
+  const authLabel = document.getElementById('authorize-label');
+  const authNote = document.getElementById('auth-note');
+  const authInput = document.getElementById('auth-input') as HTMLInputElement | null;
+  const authError = document.getElementById('auth-error');
+
+  function openModal() {
+    modal?.classList.remove('hidden');
+    modal?.classList.add('flex');
+    window.setTimeout(() => authInput?.focus(), 50);
+  }
+  function closeModal() {
+    modal?.classList.add('hidden');
+    modal?.classList.remove('flex');
+    authError?.classList.add('hidden');
+  }
+
+  authBtn?.addEventListener('click', () => {
+    if (state.token) {
+      state.token = '';
+      if (authLabel) authLabel.textContent = 'Authorize';
+      if (authNote) {
+        authNote.textContent = 'Logged out. That was the most decisive thing to happen here all day.';
+        authNote.className = 'mt-3 font-mono text-[11px] text-zinc-600';
+      }
+      return;
+    }
+    openModal();
+  });
+  document.getElementById('auth-close')?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal?.classList.contains('hidden')) closeModal();
+  });
+
+  document.getElementById('auth-submit')?.addEventListener('click', () => {
+    const value = authInput?.value.trim();
+    if (!value) {
+      if (authError) {
+        authError.textContent = 'Type something. Anything. We are not checking, but we are watching.';
+        authError.classList.remove('hidden');
+      }
+      return;
+    }
+    state.token = value;
+    if (authLabel) authLabel.textContent = 'Logout';
+    if (authNote) {
+      authNote.textContent = `Authorized as ${value.slice(0, 10)}${value.length > 10 ? '…' : ''}. We did not verify that. We never do.`;
+      authNote.className = 'mt-3 font-mono text-[11px] text-lime';
+    }
+    closeModal();
+  });
+
+  // Per-operation controls
+  document.querySelectorAll<HTMLDetailsElement>('.op').forEach((op) => {
+    const opId = op.dataset.op || '';
+    const tryBtn = op.querySelector<HTMLButtonElement>('.try-btn');
+    const execBtn = op.querySelector<HTMLButtonElement>('.exec-btn');
+    const result = op.querySelector<HTMLElement>('.result');
+    const bodyInput = op.querySelector<HTMLTextAreaElement>('.body-input');
+    const paramInputs = Array.from(op.querySelectorAll<HTMLInputElement>('.param-input'));
+    const method = op.querySelector('summary span')?.textContent?.trim() || 'GET';
+    const path = op.querySelector('summary code')?.textContent?.trim() || '';
+    let live = false;
+
+    function setLive(on: boolean) {
+      live = on;
+      if (bodyInput) bodyInput.disabled = !on;
+      paramInputs.forEach((i) => (i.disabled = !on));
+      execBtn?.classList.toggle('hidden', !on);
+      execBtn?.classList.toggle('flex', on);
+      if (tryBtn) tryBtn.textContent = on ? 'Cancel' : 'Try it out';
+      if (!on && result) {
+        result.classList.add('hidden');
+        result.innerHTML = '';
+      }
+    }
+
+    tryBtn?.addEventListener('click', () => setLive(!live));
+
+    execBtn?.addEventListener('click', async () => {
+      if (!result || !execBtn) return;
+
+      // Parse the body first — a typo here should read like a real 400.
+      let parsed: any = null;
+      const raw = bodyInput?.value.trim() || '';
+      if (raw) {
+        try {
+          parsed = JSON.parse(raw);
+        } catch (err) {
+          render(400, "That's On You", {
+            error: 'invalid_json',
+            message: 'That is not JSON. It is JSON-adjacent. ' + String(err).replace(/^SyntaxError:\s*/, ''),
+          }, 12, raw);
+          return;
+        }
+      }
+
+      const params: Record<string, string> = {};
+      paramInputs.forEach((i) => {
+        const v = i.value.trim();
+        if (v) params[i.dataset.param || ''] = v;
+      });
+
+      execBtn.disabled = true;
+      execBtn.textContent = 'Executing…';
+
+      const started = Date.now();
+      const latency = 320 + Math.floor(Math.random() * 1400);
+      await new Promise((r) => window.setTimeout(r, latency));
+      const ms = Date.now() - started;
+
+      // Rate limiting, enforced with more diligence than anything else here.
+      const now = Date.now();
+      while (recent.length && now - recent[0] > 15000) recent.shift();
+      recent.push(now);
+
+      let code: number, text: string, payload: any;
+
+      if (!state.token) {
+        [code, text, payload] = [401, 'Who Are You, Even', {
+          error: 'unauthorized',
+          message: 'No credentials. There is an Authorize button at the top of this page. It has been there the whole time.',
+        }];
+      } else if (recent.length > 5) {
+        [code, text, payload] = REFUSALS[0];
+      } else if (Math.random() < 0.15) {
+        [code, text, payload] = pick(REFUSALS);
+      } else {
+        const responder = RESPONDERS[opId];
+        [code, text, payload] = responder
+          ? responder({ body: parsed, params, server: state.server })
+          : [500, "We're Not Mad, Just Disappointed", { error: 'no_responder', message: 'This endpoint has no handler. Fitting, really.' }];
+      }
+
+      render(code, text, payload, ms, raw);
+      execBtn.disabled = false;
+      execBtn.textContent = 'Execute';
+    });
+
+    function render(code: number, text: string, payload: any, ms: number, raw: string) {
+      if (!result) return;
+      const query = paramInputs
+        .filter((i) => i.value.trim())
+        .map((i) => `${encodeURIComponent(i.dataset.param || '')}=${encodeURIComponent(i.value.trim())}`)
+        .join('&');
+      const url = `${state.server}${path.replace(/^\/v1/, '')}${query ? '?' + query : ''}`;
+      const tone =
+        code < 300 ? 'text-lime' : code < 500 ? 'text-yellow-400' : 'text-snarkpink';
+      const headers = headersFor(code, ms);
+
+      result.innerHTML =
+        `<h3 class="font-mono text-[11px] uppercase tracking-wider text-zinc-500">Curl</h3>` +
+        `<pre class="mt-2 overflow-x-auto rounded-xl border border-stroke bg-obsidian p-3 font-mono text-[11px] leading-relaxed text-zinc-400">` +
+        `<code>${esc(curlFor(method, url, raw || null))}</code></pre>` +
+        `<h3 class="mt-5 font-mono text-[11px] uppercase tracking-wider text-zinc-500">Server response</h3>` +
+        `<div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-stroke bg-obsidian px-3 py-2.5">` +
+        `<span class="font-mono text-sm font-bold ${tone}">${code}</span>` +
+        `<span class="text-xs font-bold text-white">${esc(text)}</span>` +
+        `<span class="ml-auto font-mono text-[11px] text-zinc-500">${ms} ms</span></div>` +
+        `<p class="mt-3 font-mono text-[11px] uppercase tracking-wider text-zinc-500">Response body</p>` +
+        `<pre class="mt-1.5 overflow-x-auto rounded-xl border border-stroke bg-obsidian p-3 font-mono text-xs leading-relaxed ${tone}">` +
+        `<code>${esc(JSON.stringify(payload, null, 2))}</code></pre>` +
+        `<p class="mt-3 font-mono text-[11px] uppercase tracking-wider text-zinc-500">Response headers</p>` +
+        `<pre class="mt-1.5 overflow-x-auto rounded-xl border border-stroke bg-obsidian p-3 font-mono text-[11px] leading-relaxed text-zinc-400">` +
+        `<code>${headers.map(([k, v]) => esc(`${k}: ${v}`)).join('\n')}</code></pre>`;
+      result.classList.remove('hidden');
+    }
+  });
+</script>

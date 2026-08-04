@@ -1,0 +1,95 @@
+---
+const articles = [
+  {
+    title: 'App With Exactly One Job Sends 41 Notifications About Doing It',
+    readTime: '3 Min Read',
+    excerpt:
+      'Four were about a feature that no longer exists. One was a notification confirming that notifications were working. It was correct.',
+    tag: 'Notifications',
+    icon: 'bell',
+  },
+  {
+    title: 'Study Finds "Performance Improvements and Bug Fixes" Improved Neither',
+    readTime: '4 Min Read',
+    excerpt:
+      'Researchers diffed nine hundred releases. A button moved four pixels to the left in every one of them. They believe it is the same button.',
+    tag: 'Research',
+    icon: 'chart',
+  },
+  {
+    title: 'Lightbulb Requires Firmware Update Before It Will Agree to Be On',
+    readTime: '2 Min Read',
+    excerpt:
+      'The update took eleven minutes. The room was dark for all of them. There is a wall switch four feet away that has never once asked for anything.',
+    tag: 'Smart Home',
+    icon: 'wifi',
+  },
+];
+---
+
+<section id="dispatches" class="px-4 py-16 sm:px-6 sm:py-24">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-10 text-center sm:mb-14">
+      <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lime">The Content Farm</p>
+      <h2 class="text-3xl font-black tracking-tight text-white sm:text-4xl">
+        Dispatches From the Bottom of the Cookie Banner
+      </h2>
+      <p class="mx-auto mt-3 max-w-lg text-sm text-monogrey sm:text-base">
+        Rigorous journalism. Peer-reviewed eye-rolls. Zero actionable insights, guaranteed.
+      </p>
+    </div>
+
+    <!-- 1 column on mobile, 3 on desktop -->
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6" data-reveal>
+      {
+        articles.map((article) => (
+          <article class="spotlight group flex cursor-pointer flex-col rounded-2xl border border-stroke bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-lime hover:shadow-lime-glow">
+            <div class="mb-4 flex items-center justify-between">
+              <span class="inline-flex items-center rounded-full border border-stroke bg-obsidian px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-monogrey transition-colors duration-300 group-hover:border-lime group-hover:text-lime">
+                {article.tag}
+              </span>
+              <span class="font-mono text-[11px] text-zinc-500">{article.readTime}</span>
+            </div>
+
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-stroke bg-obsidian text-lime transition-transform duration-300 group-hover:scale-110">
+              {article.icon === 'bell' && (
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+                </svg>
+              )}
+              {article.icon === 'chart' && (
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="12" y1="20" x2="12" y2="10" />
+                  <line x1="18" y1="20" x2="18" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="16" />
+                </svg>
+              )}
+              {article.icon === 'wifi' && (
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12.5a10 10 0 0 1 14 0" />
+                  <path d="M8.5 16a5 5 0 0 1 7 0" />
+                  <path d="M2 9a15 15 0 0 1 20 0" />
+                  <line x1="12" y1="20" x2="12.01" y2="20" />
+                </svg>
+              )}
+            </div>
+
+            <h3 class="mb-3 text-lg font-bold leading-snug text-white transition-colors duration-300 group-hover:text-lime">
+              {article.title}
+            </h3>
+            <p class="flex-1 text-sm leading-relaxed text-monogrey">{article.excerpt}</p>
+
+            <span class="mt-5 inline-flex min-h-12 items-center gap-2 text-sm font-semibold text-snarkpink transition-all duration-300 group-hover:gap-3">
+              Pretend to read
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </span>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,252 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// Real US dollars. We tried a fake currency for a while. Nobody flinched.
+const tiers = [
+  {
+    name: 'Pity',
+    price: '$0',
+    period: 'forever. It shows.',
+    tagline: 'For people who want contempt but haven’t earned it yet.',
+    features: [
+      'Five snarks a day, whether you deserve them or not',
+      'Standard-grade condescension',
+      'Support via a shrug',
+      'Community access (they don’t like you either)',
+    ],
+    cta: 'Start Being Judged',
+    featured: false,
+  },
+  {
+    name: 'Withering',
+    price: '$1,499',
+    period: 'a month, billed annually, obviously',
+    tagline: 'Our most popular tier, which tells you everything about our customers.',
+    features: [
+      'Unlimited snark, minimal warmth',
+      'Priority disdain — we ignore you first',
+      'Custom eye-roll intensity (0–100% Bless.)',
+      'API access to our indifference',
+      'Monthly report on your shortcomings',
+    ],
+    cta: 'Purchase Regret',
+    featured: true,
+  },
+  {
+    name: 'Full British',
+    price: '$2,400,000',
+    period: 'a year. We’ll wait.',
+    tagline: 'Weapons-grade understatement for organizations beyond saving.',
+    features: [
+      'A dedicated overseer who sighs audibly',
+      'SLA: Sarcasm Level Agreement',
+      'On-premises condescension appliance',
+      'Volume discounts on disappointment',
+      'A yearly "How Nice For You" call you will not attend',
+    ],
+    cta: 'Talk to a Human, Reluctantly',
+    featured: false,
+  },
+];
+
+const faqs = [
+  {
+    q: 'Can I cancel anytime?',
+    a: 'You can, in seven steps, the last of which asks whether you are sure. It will be the most decisive thing you have done since you last changed a password.',
+  },
+  {
+    q: 'Do you offer refunds?',
+    a: 'We offer perspective: you did this to yourself. Perspective is non-refundable.',
+  },
+  {
+    q: 'Is there a student discount?',
+    a: 'Your entire situation is the discount. Enjoy it while it lasts.',
+  },
+  {
+    q: 'What payment methods do you accept?',
+    a: 'Card, bank transfer, or a screenshot of the money bags at the exact moment the number left their account. We do not accept apologies, exposure, or "I\'ll sort it out when I get home."',
+  },
+  {
+    q: 'Why is Withering $1,499 a month?',
+    a: 'Because $1,500 felt greedy.',
+  },
+  {
+    q: 'Is Full British really $2.4 million a year?',
+    a: 'It is. It was also $2.4 million before you asked, and it will be $2.4 million after you close the tab and think about it for a year.',
+  },
+  {
+    q: 'Do you have a free trial?',
+    a: 'Life is the free trial. This is the paid tier.',
+  },
+];
+---
+
+<Layout
+  title="Pricing — Snark™ | Pay to Be Judged"
+  description="Three tiers of professionally administered contempt. Cancel anytime; we saw it coming."
+>
+  <Header />
+  <main class="px-4 py-14 sm:px-6 sm:py-20">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-12 text-center">
+        <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lime">Pricing</p>
+        <h1 class="text-balance text-4xl font-black tracking-tight text-white sm:text-5xl">
+          Pay Us to Think Less of You
+        </h1>
+        <p class="mx-auto mt-4 max-w-xl text-balance text-base text-monogrey sm:text-lg">
+          Three tiers. No hidden fees — every fee is right there, in daylight, being
+          rude to you. Prices in US dollars, because it lands harder when you can
+          picture the number.
+        </p>
+      </div>
+
+      <!-- Tiers: 1 col mobile, 3 col desktop -->
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
+        {
+          tiers.map((tier) => (
+            <div
+              class:list={[
+                'spotlight relative flex flex-col rounded-2xl border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 sm:p-8',
+                tier.featured
+                  ? 'border-lime shadow-lime-glow'
+                  : 'border-stroke hover:border-lime',
+              ]}
+            >
+              {tier.featured && (
+                <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-lime px-4 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-obsidian">
+                  Most Resented
+                </span>
+              )}
+              <h2 class="text-xl font-black text-white">{tier.name}</h2>
+              <p class="mt-1 text-sm text-monogrey">{tier.tagline}</p>
+              <p class="mt-5">
+                <span class="text-4xl font-black text-lime">{tier.price}</span>
+                <span class="ml-2 font-mono text-xs text-zinc-500">{tier.period}</span>
+              </p>
+              <ul class="mt-6 flex-1 space-y-3">
+                {tier.features.map((feature) => (
+                  <li class="flex items-start gap-3 text-sm leading-relaxed text-zinc-300">
+                    <svg
+                      class="mt-0.5 h-4 w-4 shrink-0 text-snarkpink"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/')}#contact`}
+                class:list={[
+                  'mt-8 flex min-h-12 items-center justify-center rounded-xl px-6 py-3 text-base font-bold transition-all duration-200 active:scale-95',
+                  tier.featured
+                    ? 'bg-lime text-obsidian hover:bg-lime-glow hover:shadow-lime-glow'
+                    : 'border border-stroke bg-obsidian text-zinc-200 hover:border-lime hover:text-lime',
+                ]}
+              >
+                {tier.cta}
+              </a>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="mt-6 text-center font-mono text-[11px] text-zinc-500">
+        All plans include our uptime guarantee: the disdain never goes down.
+      </p>
+      <p class="mt-2 text-center font-mono text-[11px] text-zinc-600">
+        Prices exclude tax, onboarding, and the cost of hearing what we actually think.
+        Annual billing saves you nothing. It just gets it over with.
+      </p>
+
+      <!-- Comparison table -->
+      <div class="mx-auto mt-16 max-w-3xl sm:mt-24" data-reveal>
+        <h2 class="mb-3 text-center text-2xl font-black text-white sm:text-3xl">
+          Snark™ vs. Sincerity
+        </h2>
+        <p class="mb-8 text-center text-sm text-monogrey sm:text-base">
+          An unfair comparison, which is our favorite kind.
+        </p>
+        <div class="overflow-hidden rounded-2xl border border-stroke bg-surface">
+          <div class="grid grid-cols-3 border-b border-stroke bg-obsidian/60">
+            <p class="px-4 py-4 font-mono text-[11px] uppercase tracking-wider text-zinc-500 sm:px-6">
+              Category
+            </p>
+            <p class="px-4 py-4 text-center font-mono text-[11px] font-bold uppercase tracking-wider text-lime sm:px-6">
+              Snark™
+            </p>
+            <p class="px-4 py-4 text-center font-mono text-[11px] uppercase tracking-wider text-zinc-500 sm:px-6">
+              Sincerity
+            </p>
+          </div>
+          {
+            [
+              ['Honesty', 'Weaponized', 'Accidental'],
+              ['Delivery time', 'Instant, uninvited', 'Three drinks minimum'],
+              ['Uptime', '99.99%', 'Down since 2009'],
+              ['Eye contact', 'Withering', 'Earnest. Moist.'],
+              ['Cost', '$1,499 a month', 'Your soul, in installments'],
+              ['Aftertaste', 'Crisp', 'Lingering guilt'],
+            ].map(([category, snark, sincerity], i) => (
+              <div
+                class:list={[
+                  'grid grid-cols-3 items-center',
+                  i > 0 && 'border-t border-stroke',
+                ]}
+              >
+                <p class="px-4 py-4 text-sm font-semibold text-zinc-300 sm:px-6">{category}</p>
+                <p class="bg-lime/5 px-4 py-4 text-center text-sm font-bold text-lime sm:px-6">
+                  {snark}
+                </p>
+                <p class="px-4 py-4 text-center text-sm text-zinc-500 sm:px-6">{sincerity}</p>
+              </div>
+            ))
+          }
+        </div>
+        <p class="mt-3 text-center font-mono text-[11px] text-zinc-600">
+          Methodology: we made it up, confidently. Which, again, is the product.
+        </p>
+      </div>
+
+      <!-- FAQ -->
+      <div class="mx-auto mt-16 max-w-2xl sm:mt-24">
+        <h2 class="mb-8 text-center text-2xl font-black text-white sm:text-3xl">
+          Questions We Knew You'd Ask
+        </h2>
+        <div class="space-y-3">
+          {
+            faqs.map((faq) => (
+              <details class="group rounded-xl border border-stroke bg-surface transition-colors duration-200 hover:border-lime">
+                <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-base font-semibold text-zinc-200 [&::-webkit-details-marker]:hidden">
+                  {faq.q}
+                  <svg
+                    class="h-5 w-5 shrink-0 text-lime transition-transform duration-200 group-open:rotate-45"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    aria-hidden="true"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </summary>
+                <p class="px-5 pb-5 text-sm leading-relaxed text-monogrey">{faq.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

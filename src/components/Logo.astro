@@ -1,0 +1,141 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = 'h-10 w-10' } = Astro.props;
+---
+
+<!--
+  The Snark™ mark: a chat bubble mid-eye-roll.
+  Hover/tap: the bubble scales up smugly and the eyes roll even further,
+  which is the only KPI our design team is measured on.
+-->
+<span class:list={['logo-poke group inline-block cursor-pointer select-none', 'transition-transform duration-300 ease-out', 'hover:scale-110 active:scale-95']}>
+  <svg
+    class={className}
+    viewBox="0 0 64 64"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Snark logo: a chat bubble rolling its eyes"
+  >
+    <!-- Bubble body -->
+    <rect
+      x="4"
+      y="6"
+      width="56"
+      height="42"
+      rx="12"
+      class="fill-surface stroke-lime transition-colors duration-300 group-hover:fill-zinc-800"
+      stroke-width="4"></rect>
+
+    <!-- Bubble tail -->
+    <path
+      d="M18 48 L18 60 L32 48 Z"
+      class="fill-surface stroke-lime transition-colors duration-300 group-hover:fill-zinc-800"
+      stroke-width="4"
+      stroke-linejoin="round"></path>
+
+    <!-- The eyes: tilted geometric slits. On hover they rotate further —
+         the internationally recognized gesture for "sure, whatever." -->
+    <g class="origin-center transition-transform duration-300 ease-out group-hover:-rotate-12">
+      <g class="logo-eyes">
+        <rect
+          x="17"
+          y="22"
+          width="12"
+          height="4"
+          rx="2"
+          class="fill-lime"
+          transform="rotate(-8 23 24)"></rect>
+        <rect
+          x="35"
+          y="22"
+          width="12"
+          height="4"
+          rx="2"
+          class="fill-lime"
+          transform="rotate(8 41 24)"></rect>
+      </g>
+    </g>
+
+    <!-- The mouth: a perfectly flat line. It has never smiled. It never will. -->
+    <rect
+      x="24"
+      y="34"
+      width="16"
+      height="4"
+      rx="2"
+      class="fill-snarkpink transition-transform duration-300 origin-center group-hover:scale-x-75"
+    ></rect>
+  </svg>
+</span>
+
+<style>
+  /* It blinks. Slowly. Like it's doing you a favor by staying awake. */
+  .logo-eyes {
+    animation: logo-blink 6s infinite;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  @keyframes logo-blink {
+    0%,
+    91%,
+    100% {
+      transform: scaleY(1);
+    }
+    94%,
+    96% {
+      transform: scaleY(0.12);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .logo-eyes {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Poke the mascot enough times and it will address you directly.
+  const POKE_LINES: Array<[number, string]> = [
+    [5, 'Please stop poking the mascot.'],
+    [9, 'It remembers faces.'],
+    [13, 'Security has been sighed for.'],
+    [20, 'Fine. You win. It respects the commitment. Barely.'],
+  ];
+
+  let pokes = 0;
+  let toastEl: HTMLDivElement | null = null;
+  let toastTimer = 0;
+
+  function toast(message: string) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.setAttribute('role', 'status');
+      toastEl.style.cssText =
+        'position:fixed;bottom:96px;left:50%;transform:translateX(-50%);z-index:80;' +
+        'background:#18181B;border:1px solid #A3E635;color:#E4E4E7;padding:12px 20px;' +
+        'border-radius:12px;font-family:ui-monospace,monospace;font-size:13px;' +
+        'box-shadow:0 0 24px rgba(163,230,53,.25);opacity:0;transition:opacity .3s;' +
+        'pointer-events:none;max-width:90vw;text-align:center;';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = message;
+    requestAnimationFrame(() => {
+      if (toastEl) toastEl.style.opacity = '1';
+    });
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => {
+      if (toastEl) toastEl.style.opacity = '0';
+    }, 2400);
+  }
+
+  document.querySelectorAll('.logo-poke').forEach((el) => {
+    el.addEventListener('click', () => {
+      pokes += 1;
+      const line = POKE_LINES.find(([count]) => count === pokes);
+      if (line) toast(line[1]);
+    });
+  });
+</script>

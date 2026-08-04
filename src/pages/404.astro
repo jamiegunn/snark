@@ -1,0 +1,98 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Logo from '../components/Logo.astro';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+---
+
+<Layout
+  title="404 — Snark™ | This Page Ghosted You"
+  description="The page you wanted has left the building, blocked your number, and started a new life."
+>
+  <main class="flex min-h-screen flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
+    <div class="mb-8">
+      <Logo class="h-24 w-24 sm:h-28 sm:w-28" />
+    </div>
+
+    <p class="font-mono text-sm uppercase tracking-widest text-snarkpink">Error 404</p>
+
+    <h1 class="mt-3 max-w-xl text-balance text-4xl font-black tracking-tight text-white sm:text-5xl">
+      This Page Saw You Coming and <span class="text-lime">Left</span>.
+    </h1>
+
+    <p class="mt-5 max-w-md text-balance text-base leading-relaxed text-monogrey sm:text-lg">
+      It's not lost. It's avoiding you. Honestly, after the URL you just typed,
+      can you blame it?
+    </p>
+
+    <div class="mt-8 rounded-xl border border-stroke bg-surface p-4 font-mono text-xs text-zinc-500 sm:text-sm">
+      <p>&gt; status: <span class="text-snarkpink">emotionally unavailable</span></p>
+      <p>&gt; last_seen: <span class="text-lime">reading your request</span></p>
+      <p>&gt; response: <span class="text-monogrey">left on read</span></p>
+    </div>
+
+    <!-- The search bar of last resort -->
+    <div class="mt-8 w-full max-w-sm">
+      <div class="flex gap-2">
+        <input
+          id="lost-search"
+          type="text"
+          placeholder="Search for the page, if you must"
+          class="min-h-12 w-full rounded-xl border border-stroke bg-surface px-4 text-sm text-zinc-200 placeholder:text-zinc-600 transition-colors duration-200 focus:border-lime focus:outline-none focus:ring-1 focus:ring-lime"
+        />
+        <button
+          id="lost-search-btn"
+          type="button"
+          class="flex min-h-12 shrink-0 items-center justify-center rounded-xl border border-stroke bg-surface px-5 text-sm font-semibold text-monogrey transition-all duration-200 hover:border-lime hover:text-lime active:scale-95"
+        >
+          Search
+        </button>
+      </div>
+      <p id="lost-search-result" class="mt-2 min-h-5 font-mono text-xs text-snarkpink"></p>
+    </div>
+
+    <a
+      href={base}
+      class="mt-10 flex min-h-12 items-center justify-center rounded-xl bg-lime px-8 py-3 text-base font-bold text-obsidian shadow-lime-glow transition-all duration-200 hover:-translate-y-0.5 hover:bg-lime-glow active:translate-y-0 active:scale-95"
+    >
+      Slink Back to the Homepage
+    </a>
+
+    <p class="mt-4 font-mono text-[11px] text-zinc-600">
+      We won't tell anyone you were here.
+    </p>
+  </main>
+</Layout>
+
+<script>
+  // Search results, in descending order of patience.
+  const RESULTS = [
+    'No.',
+    'Still no.',
+    'The page is gone. Searching will not bring it back.',
+    'You’re not even typing real words now.',
+    'Search has left too. It said you know why.',
+  ];
+  let attempts = 0;
+  const searchBtn = document.getElementById('lost-search-btn');
+  const searchInput = document.getElementById('lost-search') as HTMLInputElement | null;
+  const resultEl = document.getElementById('lost-search-result');
+
+  function search() {
+    if (!resultEl) return;
+    resultEl.textContent = RESULTS[Math.min(attempts, RESULTS.length - 1)];
+    attempts += 1;
+    if (attempts >= RESULTS.length && searchBtn && searchInput) {
+      (searchBtn as HTMLButtonElement).disabled = true;
+      searchBtn.textContent = 'Gone';
+      searchInput.disabled = true;
+      searchInput.placeholder = '';
+    }
+  }
+  searchBtn?.addEventListener('click', search);
+  searchInput?.addEventListener('keydown', (event) => {
+    if ((event as KeyboardEvent).key === 'Enter') search();
+  });
+</script>

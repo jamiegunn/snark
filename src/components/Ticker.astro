@@ -1,0 +1,43 @@
+---
+// The Snark Exchange™ — live-ish market data for feelings nobody trades anymore.
+const items = [
+  { up: true, text: 'SNRK — passive aggression +40%' },
+  { up: false, text: 'SINCERITY — delisted 2009' },
+  { up: true, text: 'EYE-ROLL FUTURES — record highs' },
+  { up: false, text: 'YOUR STOCK — we checked' },
+  { up: true, text: 'UNREAD NOTIFICATIONS — 4,182 and climbing' },
+  { up: false, text: 'ENTHUSIASM — 3.2%, still falling' },
+  { up: true, text: 'COOKIE CONSENT — accepted unread, all-time high' },
+  { up: true, text: 'TERMS OF SERVICE — updated again, quietly' },
+  { up: false, text: 'SMALL TALK — trading suspended by request' },
+  { up: true, text: 'RAISED EYEBROWS — up 2 points, both of them' },
+];
+---
+
+<div
+  class="ticker-shell overflow-hidden border-y border-stroke bg-surface/60 py-3"
+  aria-hidden="true"
+  title="The Snark Exchange™ — pausing it won't improve the numbers"
+>
+  <div class="flex w-max animate-marquee whitespace-nowrap font-mono text-xs text-monogrey">
+    {
+      [0, 1].map(() =>
+        items.map((item) => (
+          <span class="mr-10 flex items-center gap-2">
+            <span class={item.up ? 'text-lime' : 'text-snarkpink'}>
+              {item.up ? '▲' : '▼'}
+            </span>
+            {item.text}
+          </span>
+        ))
+      )
+    }
+  </div>
+</div>
+
+<style>
+  /* Hovering pauses the market. The market resents the interruption. */
+  .ticker-shell:hover :global(.animate-marquee) {
+    animation-play-state: paused;
+  }
+</style>

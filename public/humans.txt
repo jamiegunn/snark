@@ -1,0 +1,13 @@
+/* TEAM */
+Humans: one, allegedly.
+Overseers: several. None of them reachable.
+Mascot: blinks every six seconds. Judges continuously.
+
+/* SITE */
+Stack: Astro, Tailwind CSS, weapons-grade contempt.
+Fonts: Inter, JetBrains Mono, and the silent font of disapproval.
+Sincerity: 404.
+
+/* THANKS */
+To everyone who clicked "Accept All" without reading it.
+You built this. Unknowingly.

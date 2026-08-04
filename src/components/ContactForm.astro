@@ -1,0 +1,263 @@
+---
+// The Feedback Vortex™ — where opinions go to be processed, weighted,
+// and immediately composted.
+---
+
+<section id="contact" class="px-4 py-16 sm:px-6 sm:py-24">
+  <div class="mx-auto max-w-2xl">
+    <div class="mb-10 text-center">
+      <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lime">Go Away</p>
+      <h2 class="text-3xl font-black tracking-tight text-white sm:text-4xl">
+        (Please Don't) Submit an Opinion
+      </h2>
+      <p class="mx-auto mt-3 max-w-md text-sm text-monogrey sm:text-base">
+        Every submission is read carefully by no one and filed instantly in a folder
+        named misc_final_v2_ACTUAL.
+      </p>
+    </div>
+
+    <form
+      id="opinion-form"
+      class="rounded-2xl border border-stroke bg-surface p-5 sm:p-8"
+      novalidate
+    >
+      <!-- Name -->
+      <label class="block">
+        <span class="mb-2 block text-sm font-semibold text-zinc-200">Your Name</span>
+        <input
+          type="text"
+          name="name"
+          required
+          placeholder="Or whoever you're pretending to be today"
+          class="min-h-12 w-full rounded-xl border border-stroke bg-obsidian px-4 py-3 text-base text-zinc-200 placeholder:text-zinc-600 transition-colors duration-200 focus:border-lime focus:outline-none focus:ring-1 focus:ring-lime"
+        />
+      </label>
+
+      <!-- Opinion -->
+      <label class="mt-5 block">
+        <span class="mb-2 block text-sm font-semibold text-zinc-200">Your Opinion, If You Must</span>
+        <textarea
+          name="opinion"
+          rows="4"
+          required
+          placeholder="Type it all out. Really get it off your chest. This is a safe space (for us, because we won't read it)."
+          class="w-full rounded-xl border border-stroke bg-obsidian px-4 py-3 text-base text-zinc-200 placeholder:text-zinc-600 transition-colors duration-200 focus:border-lime focus:outline-none focus:ring-1 focus:ring-lime"
+        ></textarea>
+      </label>
+
+      <!-- Level of Disregard slider -->
+      <div class="mt-6">
+        <div class="mb-2 flex items-center justify-between gap-3">
+          <span class="text-sm font-semibold text-zinc-200">Requested Level of Disregard</span>
+          <span
+            id="disregard-value"
+            class="rounded-full border border-stroke bg-obsidian px-3 py-1 font-mono text-xs font-bold text-lime"
+          >
+            50%
+          </span>
+        </div>
+        <input
+          id="disregard-slider"
+          name="disregard"
+          type="range"
+          min="0"
+          max="100"
+          value="50"
+          step="1"
+          class="disregard-range h-12 w-full cursor-pointer appearance-none bg-transparent"
+          aria-label="Level of disregard"
+        />
+        <div class="flex items-center justify-between font-mono text-[11px] text-zinc-500">
+          <span>0% · Mild Eye-Roll</span>
+          <span>100% · Total Apathy</span>
+        </div>
+        <p id="disregard-label" class="mt-3 text-center font-mono text-sm text-snarkpink">
+          Current mood: "Audible Sigh"
+        </p>
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="mt-7 flex min-h-12 w-full items-center justify-center rounded-xl bg-snarkpink px-6 py-3 text-base font-bold text-white transition-all duration-200 hover:bg-rose-400 hover:shadow-pink-glow active:scale-95"
+      >
+        Yell Into the Void
+      </button>
+      <p class="mt-3 text-center font-mono text-[11px] text-zinc-500">
+        By submitting, you agree that your opinion becomes legally ours to ignore.
+      </p>
+    </form>
+  </div>
+
+  <!-- Confirmation modal -->
+  <div
+    id="opinion-modal"
+    class="fixed inset-0 z-[60] hidden items-center justify-center bg-obsidian/80 px-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="opinion-modal-title"
+  >
+    <div
+      class="w-full max-w-md scale-95 rounded-2xl border border-stroke bg-surface p-6 opacity-0 shadow-lime-glow transition-all duration-300 sm:p-8"
+      id="opinion-modal-card"
+    >
+      <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-lime bg-obsidian text-2xl">
+        🔕
+      </div>
+      <h3 id="opinion-modal-title" class="text-xl font-black text-white sm:text-2xl">
+        Opinion Received. Sort Of.
+      </h3>
+      <p class="mt-3 text-base leading-relaxed text-monogrey">
+        Your opinion has been logged, indexed, and routed to a channel nobody has
+        opened since 2019.
+      </p>
+      <p class="mt-2 font-mono text-xs text-zinc-500">
+        The algorithm rated it: <span id="void-rating" class="text-lime">"low engagement."</span>
+      </p>
+      <button
+        id="opinion-modal-close"
+        type="button"
+        class="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl bg-lime px-6 py-3 text-base font-bold text-obsidian transition-all duration-200 hover:bg-lime-glow active:scale-95"
+      >
+        Understood, Regrettably
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Custom range slider styling — because default sliders show effort,
+     and we only show effort ironically. */
+  .disregard-range::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #a3e635 var(--fill, 50%), #27272a var(--fill, 50%));
+  }
+  .disregard-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -10px;
+    height: 28px;
+    width: 28px;
+    border-radius: 9999px;
+    background: #0f0f11;
+    border: 3px solid #a3e635;
+    box-shadow: 0 0 12px rgba(163, 230, 53, 0.4);
+    transition: transform 0.15s ease;
+  }
+  .disregard-range:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+  }
+  .disregard-range::-moz-range-track {
+    height: 8px;
+    border-radius: 9999px;
+    background: #27272a;
+  }
+  .disregard-range::-moz-range-progress {
+    height: 8px;
+    border-radius: 9999px;
+    background: #a3e635;
+  }
+  .disregard-range::-moz-range-thumb {
+    height: 28px;
+    width: 28px;
+    border-radius: 9999px;
+    background: #0f0f11;
+    border: 3px solid #a3e635;
+    box-shadow: 0 0 12px rgba(163, 230, 53, 0.4);
+  }
+</style>
+
+<script>
+  const form = document.getElementById('opinion-form') as HTMLFormElement | null;
+  const slider = document.getElementById('disregard-slider') as HTMLInputElement | null;
+  const valueEl = document.getElementById('disregard-value');
+  const labelEl = document.getElementById('disregard-label');
+  const modal = document.getElementById('opinion-modal');
+  const modalCard = document.getElementById('opinion-modal-card');
+  const closeBtn = document.getElementById('opinion-modal-close');
+  const voidRating = document.getElementById('void-rating');
+
+  const MOODS: Array<[number, string]> = [
+    [0, '"Mild Eye-Roll"'],
+    [15, '"Slow Blink"'],
+    [30, '"How Nice For You"'],
+    [45, '"Read Receipt, No Reply"'],
+    [60, '"K."'],
+    [75, '"Bless."'],
+    [90, '"Emotionally Unsubscribed"'],
+    [100, '"Total Apathy"'],
+  ];
+
+  const VOID_RATINGS = [
+    '"low engagement."',
+    '"marked as read by nobody."',
+    '"filed under Other."',
+    '"zero impressions, one regret."',
+    '"flagged for review. There is no review."',
+    '"strong take. Weak wi-fi."',
+  ];
+
+  function moodFor(value: number): string {
+    let mood = MOODS[0][1];
+    for (const [threshold, label] of MOODS) {
+      if (value >= threshold) mood = label;
+    }
+    return mood;
+  }
+
+  function updateSlider() {
+    if (!slider || !valueEl || !labelEl) return;
+    const value = Number(slider.value);
+    valueEl.textContent = `${value}%`;
+    labelEl.textContent = `Current mood: ${moodFor(value)}`;
+    slider.style.setProperty('--fill', `${value}%`);
+    // Escalating color: lime → pink as apathy rises
+    valueEl.classList.toggle('text-snarkpink', value >= 75);
+    valueEl.classList.toggle('text-lime', value < 75);
+  }
+
+  slider?.addEventListener('input', updateSlider);
+  updateSlider();
+
+  function openModal() {
+    if (!modal || !modalCard) return;
+    if (voidRating) {
+      voidRating.textContent =
+        VOID_RATINGS[Math.floor(Math.random() * VOID_RATINGS.length)];
+    }
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    requestAnimationFrame(() => {
+      modalCard.classList.remove('scale-95', 'opacity-0');
+      modalCard.classList.add('scale-100', 'opacity-100');
+    });
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    if (!modal || !modalCard) return;
+    modalCard.classList.add('scale-95', 'opacity-0');
+    modalCard.classList.remove('scale-100', 'opacity-100');
+    window.setTimeout(() => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }, 250);
+    document.body.style.overflow = '';
+  }
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    openModal();
+    form.reset();
+    updateSlider();
+  });
+
+  closeBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (event) => {
+    if (event.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeModal();
+  });
+</script>

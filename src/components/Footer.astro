@@ -1,0 +1,238 @@
+---
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const year = new Date().getFullYear();
+
+const socials = [
+  {
+    label: 'The Bird App, Or Whatever It Is Now',
+    handle: '@snark',
+    icon: 'x',
+  },
+  {
+    label: 'LinkedIn (Ironically)',
+    handle: '/company/snark',
+    icon: 'linkedin',
+  },
+  {
+    label: 'GitHub',
+    handle: 'snark-hq',
+    icon: 'github',
+  },
+];
+---
+
+<footer class="border-t border-stroke bg-surface/50 px-4 pb-32 pt-12 sm:px-6 sm:pb-24">
+  <div class="mx-auto max-w-6xl">
+    <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
+      <!-- Brand blurb -->
+      <div class="max-w-sm">
+        <p class="text-lg font-extrabold text-white">
+          Snark<span class="text-lime">™</span>
+        </p>
+        <p class="mt-2 text-sm leading-relaxed text-monogrey">
+          A wholly-owned subsidiary of Rolling Our Eyes Holdings, Inc. Proudly
+          under-delivering since roughly last Tuesday.
+        </p>
+
+        <!-- Newsletter, under duress -->
+        <form id="newsletter-form" class="mt-6" novalidate>
+          <p class="mb-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
+            The newsletter, threatened
+          </p>
+          <div class="flex gap-2">
+            <input
+              id="newsletter-email"
+              type="email"
+              required
+              placeholder="your@email, apparently"
+              class="min-h-12 w-full rounded-xl border border-stroke bg-obsidian px-4 text-sm text-zinc-200 placeholder:text-zinc-600 transition-colors duration-200 focus:border-lime focus:outline-none focus:ring-1 focus:ring-lime"
+            />
+            <button
+              type="submit"
+              class="flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-lime px-5 text-sm font-bold text-obsidian transition-all duration-200 hover:bg-lime-glow active:scale-95"
+            >
+              Fine
+            </button>
+          </div>
+          <p id="newsletter-note" class="mt-2 font-mono text-[11px] text-zinc-600">
+            One email a year, and it's an apology for the other four hundred.
+          </p>
+        </form>
+      </div>
+
+      <!-- Internal pages -->
+      <nav aria-label="Site pages">
+        <p class="mb-3 font-mono text-xs uppercase tracking-widest text-zinc-500">
+          Places to be disappointed
+        </p>
+        <ul class="flex flex-col gap-1">
+          <li>
+            <a href={`${base}pricing`} class="flex min-h-12 items-center rounded-lg px-2 text-sm text-monogrey transition-colors duration-200 hover:text-lime">
+              Pricing — pay to be judged
+            </a>
+          </li>
+          <li>
+            <a href={`${base}support`} class="flex min-h-12 items-center rounded-lg px-2 text-sm text-monogrey transition-colors duration-200 hover:text-lime">
+              Help Center — accurate, useless
+            </a>
+          </li>
+          <li>
+            <a href={`${base}status`} class="flex min-h-12 items-center rounded-lg px-2 text-sm text-monogrey transition-colors duration-200 hover:text-lime">
+              Status — all systems judging you
+            </a>
+          </li>
+          <li>
+            <a href={`${base}docs`} class="flex min-h-12 items-center rounded-lg px-2 text-sm text-monogrey transition-colors duration-200 hover:text-lime">
+              API Docs — read the manual, badly
+            </a>
+          </li>
+          <li>
+            <a href={`${base}legal`} class="flex min-h-12 items-center rounded-lg px-2 text-sm text-monogrey transition-colors duration-200 hover:text-lime">
+              Terms of Disservice
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Social links (48px touch targets) -->
+      <nav aria-label="Social media">
+        <p class="mb-3 font-mono text-xs uppercase tracking-widest text-zinc-500">
+          Follow us, or don't
+        </p>
+        <ul class="flex flex-col gap-1">
+          {
+            socials.map((social) => (
+              <li>
+                <a
+                  href="#top"
+                  class="group flex min-h-12 items-center gap-3 rounded-lg px-2 text-sm text-monogrey transition-colors duration-200 hover:text-lime"
+                >
+                  <span class="flex h-9 w-9 items-center justify-center rounded-lg border border-stroke bg-obsidian transition-colors duration-200 group-hover:border-lime">
+                    {social.icon === 'x' && (
+                      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.4 22H3.2l7.3-8.3L1.2 2h6.4l4.4 5.9L18.9 2Zm-1.1 18h1.7L7.1 3.9H5.3L17.8 20Z" />
+                      </svg>
+                    )}
+                    {social.icon === 'linkedin' && (
+                      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M20.4 20.4h-3.5v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9v5.7H9.4V9h3.4v1.6h.1c.5-.9 1.6-1.9 3.4-1.9 3.6 0 4.2 2.4 4.2 5.4v6.3ZM5.3 7.4a2 2 0 1 1 0-4.1 2 2 0 0 1 0 4.1Zm1.8 13H3.6V9h3.5v11.4ZM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 1 .8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7c0-1-.8-1.7-1.8-1.7Z" />
+                      </svg>
+                    )}
+                    {social.icon === 'github' && (
+                      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0C17 4.9 18 5.2 18 5.2c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .4.2.7.8.6a11.5 11.5 0 0 0 7.9-10.9A11.5 11.5 0 0 0 12 .5Z" />
+                      </svg>
+                    )}
+                  </span>
+                  <span>
+                    {social.label}
+                    <span class="ml-1 font-mono text-xs text-zinc-600">{social.handle}</span>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Legal-ish -->
+    <div class="mt-10 flex flex-col gap-2 border-t border-stroke pt-6 sm:flex-row sm:items-center sm:justify-between">
+      <p class="font-mono text-xs text-zinc-500">
+        © {year} Snark™. All rights reserved, though we're not sure why we bothered.
+      </p>
+      <p class="font-mono text-xs text-zinc-600">
+        No sincerity was harmed in the making of this website. It was already gone.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- Cookie "banner" — hidden by default; the inline script below reveals it
+     only if you haven't already dismissed it. Starting hidden avoids the flash
+     of banner that every other site on earth has decided you deserve. -->
+<div
+  id="cookie-banner"
+  class="fixed inset-x-0 bottom-0 z-50 hidden border-t border-stroke bg-surface/95 px-4 py-4 backdrop-blur-md transition-transform duration-500 sm:px-6"
+  role="region"
+  aria-label="Cookie disclaimer"
+>
+  <div class="mx-auto flex max-w-6xl flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <p class="text-sm leading-relaxed text-monogrey">
+      🍪 <strong class="text-zinc-200">We use cookies.</strong> Not to track you — we simply do
+      not care where you go. We just wanted a banner like the big websites have.
+    </p>
+    <div class="flex w-full gap-2 sm:w-auto">
+      <button
+        id="cookie-accept"
+        type="button"
+        class="flex min-h-12 flex-1 items-center justify-center rounded-xl bg-lime px-5 text-sm font-bold text-obsidian transition-all duration-200 hover:bg-lime-glow active:scale-95 sm:flex-none"
+      >
+        Fine
+      </button>
+      <button
+        id="cookie-reject"
+        type="button"
+        class="flex min-h-12 flex-1 items-center justify-center rounded-xl border border-stroke bg-obsidian px-5 text-sm font-semibold text-monogrey transition-all duration-200 hover:border-snarkpink hover:text-snarkpink active:scale-95 sm:flex-none"
+      >
+        Also Fine
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Runs during parse, before paint — no flash, no bundling delay. -->
+<script is:inline>
+  (function () {
+    var settled = false;
+    try {
+      settled = window.localStorage.getItem('snark:cookie-banner') === 'settled';
+    } catch (err) {
+      // Storage blocked. You will be asked again. That one is not on us.
+    }
+    if (!settled) {
+      var el = document.getElementById('cookie-banner');
+      if (el) el.classList.remove('hidden');
+    }
+  })();
+</script>
+
+<script>
+  const banner = document.getElementById('cookie-banner');
+  const accept = document.getElementById('cookie-accept');
+  const reject = document.getElementById('cookie-reject');
+
+  function dismiss() {
+    // Unlike the rest of the internet, we remember that you already did this.
+    try {
+      window.localStorage.setItem('snark:cookie-banner', 'settled');
+    } catch (err) {
+      // Nothing to be done. It'll be back. Sorry.
+    }
+    banner?.classList.add('translate-y-full');
+    window.setTimeout(() => banner?.remove(), 500);
+  }
+
+  // Both buttons do exactly the same thing. Just like real cookie banners.
+  accept?.addEventListener('click', dismiss);
+  reject?.addEventListener('click', dismiss);
+
+  // The newsletter "pipeline"
+  const newsletterForm = document.getElementById('newsletter-form') as HTMLFormElement | null;
+  const newsletterNote = document.getElementById('newsletter-note');
+  const newsletterEmail = document.getElementById('newsletter-email') as HTMLInputElement | null;
+
+  newsletterForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (newsletterNote) {
+      newsletterNote.textContent = newsletterEmail?.value
+        ? 'Bold of you. We weren’t going to send anything anyway.'
+        : 'You didn’t even type an email. Honestly? Respect.';
+      newsletterNote.classList.remove('text-zinc-600');
+      newsletterNote.classList.add('text-snarkpink');
+    }
+    if (newsletterEmail) newsletterEmail.value = '';
+  });
+</script>

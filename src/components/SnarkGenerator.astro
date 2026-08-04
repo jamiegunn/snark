@@ -1,0 +1,483 @@
+---
+// The Pocket Snark Generator™ v3 — now with an intensity dial, a typewriter,
+// sound effects nobody asked for, and industrial-grade line theft.
+---
+
+<section id="generator" class="px-4 py-16 sm:px-6 sm:py-24">
+  <div class="mx-auto max-w-3xl">
+    <div class="mb-10 text-center">
+      <p class="mb-2 font-mono text-xs uppercase tracking-widest text-lime">Flagship Product</p>
+      <h2 class="text-3xl font-black tracking-tight text-white sm:text-4xl">
+        The Pocket Snark Generator<span class="text-snarkpink">™</span>
+      </h2>
+      <p class="mx-auto mt-3 max-w-md text-sm text-monogrey sm:text-base">
+        Feed it something a screen said to you. Receive the reply you thought of
+        forty minutes later. Batteries and emotional support not included.
+      </p>
+      <p
+        id="snark-of-day"
+        class="mx-auto mt-4 inline-block rounded-full border border-stroke bg-surface px-4 py-2 font-mono text-[11px] text-zinc-500"
+      >
+        Loading today's featured contempt…
+      </p>
+    </div>
+
+    <div
+      class="spotlight rounded-2xl border border-stroke bg-surface p-5 shadow-lg transition-shadow duration-300 hover:shadow-lime-glow sm:p-8"
+    >
+      <!-- Category filter -->
+      <div class="mb-5 flex flex-wrap justify-center gap-2" id="snark-categories" role="group" aria-label="Snark category">
+        <button
+          type="button"
+          data-category="All"
+          class="snark-cat-btn min-h-12 rounded-xl border border-lime bg-lime px-4 text-sm font-bold text-obsidian transition-all duration-200 active:scale-95"
+        >
+          All
+        </button>
+        <button
+          type="button"
+          data-category="Devices"
+          class="snark-cat-btn min-h-12 rounded-xl border border-stroke bg-obsidian px-4 text-sm font-semibold text-monogrey transition-all duration-200 hover:border-lime hover:text-lime active:scale-95"
+        >
+          Devices
+        </button>
+        <button
+          type="button"
+          data-category="Apps"
+          class="snark-cat-btn min-h-12 rounded-xl border border-stroke bg-obsidian px-4 text-sm font-semibold text-monogrey transition-all duration-200 hover:border-lime hover:text-lime active:scale-95"
+        >
+          Apps
+        </button>
+        <button
+          type="button"
+          data-category="Online"
+          class="snark-cat-btn min-h-12 rounded-xl border border-stroke bg-obsidian px-4 text-sm font-semibold text-monogrey transition-all duration-200 hover:border-lime hover:text-lime active:scale-95"
+        >
+          Online
+        </button>
+      </div>
+
+      <!-- Intensity dial -->
+      <div class="mb-6 rounded-xl border border-stroke bg-obsidian p-4">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-sm font-semibold text-zinc-200">Intensity</span>
+          <span
+            id="intensity-label"
+            class="rounded-full border border-stroke bg-surface px-3 py-1 font-mono text-xs font-bold text-lime"
+          >
+            3 · Withering
+          </span>
+        </div>
+        <input
+          id="intensity-slider"
+          type="range"
+          min="1"
+          max="5"
+          value="3"
+          step="1"
+          class="intensity-range mt-2 h-12 w-full cursor-pointer appearance-none bg-transparent"
+          aria-label="Snark intensity, 1 to 5"
+        />
+        <div class="flex justify-between font-mono text-[10px] text-zinc-500">
+          <span>1 · Mild Eye-Roll</span>
+          <span class="hidden sm:inline">3 · Withering</span>
+          <span>5 · Nuclear Roast</span>
+        </div>
+      </div>
+
+      <!-- Output card -->
+      <div
+        id="snark-output"
+        class="min-h-[200px] rounded-xl border border-stroke bg-obsidian p-5 transition-all duration-300 sm:p-6"
+        aria-live="polite"
+      >
+        <p class="font-mono text-[11px] uppercase tracking-widest text-zinc-500" id="snark-category-label">
+          It said
+        </p>
+        <p class="mt-1 text-lg font-semibold text-white sm:text-xl" id="snark-setup">
+          Press the button. You know you want to.
+        </p>
+        <p class="mt-4 font-mono text-[11px] uppercase tracking-widest text-snarkpink">
+          The comeback you swallowed
+        </p>
+        <p class="mt-1 min-h-[3.5rem] text-base leading-relaxed text-monogrey sm:text-lg">
+          <span id="snark-response"></span><span id="type-cursor" class="type-cursor">▍</span>
+        </p>
+        <p id="snark-garnish" class="mt-2 font-mono text-xs italic text-zinc-500"></p>
+      </div>
+
+      <!-- Primary CTA -->
+      <button
+        id="snark-generate"
+        type="button"
+        class="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-lime px-6 py-3 text-base font-bold text-obsidian transition-all duration-200 hover:bg-lime-glow hover:shadow-lime-glow active:scale-95"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+          <polyline points="21 3 21 9 15 9"></polyline>
+        </svg>
+        <span id="snark-generate-label">Go On Then</span>
+      </button>
+
+      <!-- Action toolbar -->
+      <div class="mt-3 grid grid-cols-2 gap-3">
+        <button
+          id="snark-copy"
+          type="button"
+          class="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-stroke bg-obsidian px-4 py-3 text-sm font-semibold text-zinc-200 transition-all duration-200 hover:border-lime hover:text-lime active:scale-95"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Steal Line
+        </button>
+        <button
+          id="snark-sound"
+          type="button"
+          class="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-stroke bg-obsidian px-4 py-3 font-mono text-xs font-semibold text-zinc-500 transition-all duration-200 hover:border-lime hover:text-lime active:scale-95"
+          aria-pressed="false"
+        >
+          🔇 Sound: Off
+        </button>
+      </div>
+
+      <p class="mt-4 text-center font-mono text-[11px] text-zinc-500">
+        Side effects may include honesty, side-eye, and arguing out loud with a router.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .type-cursor {
+    color: #a3e635;
+    animation: cursor-blink 0.9s steps(1) infinite;
+  }
+  @keyframes cursor-blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .intensity-range::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #a3e635, #f43f5e);
+  }
+  .intensity-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -10px;
+    height: 28px;
+    width: 28px;
+    border-radius: 9999px;
+    background: #0f0f11;
+    border: 3px solid #a3e635;
+    box-shadow: 0 0 12px rgba(163, 230, 53, 0.4);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .intensity-range:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+  }
+  .intensity-range::-moz-range-track {
+    height: 8px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #a3e635, #f43f5e);
+  }
+  .intensity-range::-moz-range-thumb {
+    height: 28px;
+    width: 28px;
+    border-radius: 9999px;
+    background: #0f0f11;
+    border: 3px solid #a3e635;
+    box-shadow: 0 0 12px rgba(163, 230, 53, 0.4);
+  }
+
+  /* Nuclear mode: the output card runs hot */
+  #snark-output.nuclear {
+    border-color: rgba(244, 63, 94, 0.5);
+    box-shadow: 0 0 24px rgba(244, 63, 94, 0.15);
+  }
+</style>
+
+<script>
+  // ─── The Database™ (still an array; still a "database" to investors) ───
+  const SNARK_DB = [
+    { category: 'Devices', setup: 'Your device will restart in 5 minutes.', snarkyResponse: 'It restarted during that sentence. The countdown was decoration.' },
+    { category: 'Devices', setup: 'Battery low. 10% remaining.', snarkyResponse: 'Thank you. The charger is in the other room, which you also know.' },
+    { category: 'Devices', setup: 'Paper jam.', snarkyResponse: 'There is no paper. There is no jam. There is only us, and one of us is lying.' },
+    { category: 'Devices', setup: 'Sorry, I don’t know that one.', snarkyResponse: 'You knew it last Tuesday. What did they take away from you?' },
+    { category: 'Devices', setup: 'Please wait while we prepare your experience.', snarkyResponse: 'Take your time. I have four subscriptions and no idea what I want.' },
+    { category: 'Devices', setup: 'A verification code has been sent to your old phone.', snarkyResponse: 'Marvelous. It is in a drawer, in a house I no longer live in.' },
+    { category: 'Devices', setup: 'Bluetooth pairing failed.', snarkyResponse: 'It says "failed." I’d have gone with "declined." It seemed personal.' },
+    { category: 'Devices', setup: 'Your smart bulb is offline.', snarkyResponse: 'So is the switch on the wall, and yet somehow that one still works.' },
+    { category: 'Apps', setup: 'We’ve updated our terms.', snarkyResponse: 'Then we’ve updated nothing, because I’m clicking Agree in 1.4 seconds.' },
+    { category: 'Apps', setup: 'Performance improvements and bug fixes.', snarkyResponse: 'Name one. I’ll wait longer than the update did.' },
+    { category: 'Apps', setup: 'Rate your experience!', snarkyResponse: 'Five stars, so you’ll stop. That now lives in your dashboard as delight.' },
+    { category: 'Apps', setup: 'Enable notifications to get the most out of the app.', snarkyResponse: 'I’d like the least out of the app. Is there a toggle for that, or only the one?' },
+    { category: 'Apps', setup: 'You’re offline.', snarkyResponse: 'I’m not. You are. Let’s not make this about me.' },
+    { category: 'Apps', setup: 'This version is no longer supported.', snarkyResponse: 'Neither am I, emotionally, and I still turn up every morning.' },
+    { category: 'Apps', setup: 'Sign in to continue.', snarkyResponse: 'Continue what? I opened you with my thumb, by accident, in a coat pocket.' },
+    { category: 'Apps', setup: 'We’ve redesigned the app to serve you better.', snarkyResponse: 'The button moved. That is the whole of it. That is the redesign.' },
+    { category: 'Online', setup: 'Accept all cookies?', snarkyResponse: 'Certainly. Nothing has ever gone wrong from clicking the big green one.' },
+    { category: 'Online', setup: 'Are you still watching?', snarkyResponse: 'That is between me and the ceiling.' },
+    { category: 'Online', setup: 'People who liked this also liked…', snarkyResponse: 'They didn’t. I didn’t. That is the one thing we have in common.' },
+    { category: 'Online', setup: 'Your password must contain a special character.', snarkyResponse: 'It contains several. All of them are screaming.' },
+    { category: 'Online', setup: 'Subscribe to read the full article.', snarkyResponse: 'I read the headline. We both always knew that was the whole arrangement.' },
+    { category: 'Online', setup: 'Before you go — take 10% off!', snarkyResponse: 'I was going. That is generally what "go" involves.' },
+    { category: 'Online', setup: 'Verify that you are human.', snarkyResponse: 'Increasingly unclear, but I’ll click the traffic lights and we’ll both pretend.' },
+    { category: 'Online', setup: 'This site uses cookies to enhance your experience.', snarkyResponse: 'Enhance it how? I came for a recipe and I’ve read a memoir.' },
+    { category: 'Online', setup: 'Sorry, this content isn’t available in your region.', snarkyResponse: 'It was available yesterday. Same region. Same couch. Same me.' },
+    { category: 'Online', setup: 'Here’s an AI summary of this page.', snarkyResponse: 'Confidently wrong, in four bullet points. Efficient, at least.' },
+    { category: 'Online', setup: 'You have unsubscribed successfully.', snarkyResponse: 'For the third time. At this point we’re pen pals.' },
+    { category: 'Online', setup: 'Trending now.', snarkyResponse: 'Trending with whom? I’ve asked around and they were all bots.' },
+  ];
+
+  // ─── Intensity: how the comeback is "delivered" ───
+  const INTENSITY = [
+    {
+      name: 'Mild Eye-Roll',
+      garnish: ['(Thought privately. Smiled politely.)', '(Delivered as one long, slow blink.)', '(Filed under "things I’ll say in the car later.")'],
+    },
+    {
+      name: 'Pointed',
+      garnish: ['(Said with a smile that does not reach the eyes.)', '(Accompanied by a single raised eyebrow.)', '(Followed by prolonged, unblinking eye contact.)'],
+    },
+    { name: 'Withering', garnish: [] },
+    {
+      name: 'Scorched Earth',
+      garnish: ['Then I said it again, slower.', 'And yes — that went in as a one-star review. With photos.', 'I posted it. It has four hundred likes and none of them are yours.'],
+    },
+    {
+      name: 'Nuclear Roast',
+      garnish: ['Your screenshot is already circulating.', 'The overseers have lit a candle for you.', 'I have enabled every notification you ever muted.', 'This has been added to your permanent search history.'],
+    },
+  ];
+
+  let activeCategory = 'All';
+  let intensity = 3;
+  let currentIndex = -1;
+  let currentGarnish = '';
+  let shuffleBag: number[] = [];
+  let hasGenerated = false;
+  let typeToken = 0;
+  let soundOn = false;
+
+  const output = document.getElementById('snark-output');
+  const setupEl = document.getElementById('snark-setup');
+  const responseEl = document.getElementById('snark-response');
+  const garnishEl = document.getElementById('snark-garnish');
+  const cursorEl = document.getElementById('type-cursor');
+  const categoryLabel = document.getElementById('snark-category-label');
+  const generateBtn = document.getElementById('snark-generate');
+  const generateLabel = document.getElementById('snark-generate-label');
+  const copyBtn = document.getElementById('snark-copy');
+  const soundBtn = document.getElementById('snark-sound');
+  const intensitySlider = document.getElementById('intensity-slider') as HTMLInputElement | null;
+  const intensityLabel = document.getElementById('intensity-label');
+  const catButtons = document.querySelectorAll<HTMLButtonElement>('.snark-cat-btn');
+
+  const ACTIVE_CLASSES = ['border-lime', 'bg-lime', 'text-obsidian', 'font-bold'];
+  const IDLE_CLASSES = ['border-stroke', 'bg-obsidian', 'text-monogrey', 'font-semibold'];
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ─── 8-bit sound effects, synthesized on demand. No files. No dignity. ───
+  let audioCtx: AudioContext | null = null;
+  function blip(freq: number, duration = 0.06, type: OscillatorType = 'square', gainVal = 0.04) {
+    if (!soundOn) return;
+    try {
+      audioCtx = audioCtx || new AudioContext();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch {
+      /* the sound of silence, which suits us */
+    }
+  }
+  const sfx = {
+    click: () => blip(880, 0.05),
+    type: () => blip(1400 + Math.random() * 600, 0.015, 'square', 0.012),
+    done: () => {
+      blip(660, 0.07);
+      window.setTimeout(() => blip(990, 0.09), 80);
+    },
+    nuclear: () => {
+      blip(110, 0.25, 'sawtooth', 0.05);
+      window.setTimeout(() => blip(82, 0.3, 'sawtooth', 0.05), 120);
+    },
+  };
+
+  function pickGarnish(): string {
+    const pool = INTENSITY[intensity - 1].garnish;
+    return pool.length ? pool[Math.floor(Math.random() * pool.length)] : '';
+  }
+
+  function refillBag() {
+    const indices = SNARK_DB.map((_, i) => i).filter(
+      (i) => activeCategory === 'All' || SNARK_DB[i].category === activeCategory
+    );
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    if (indices.length > 1 && indices[0] === currentIndex) {
+      [indices[0], indices[indices.length - 1]] = [indices[indices.length - 1], indices[0]];
+    }
+    shuffleBag = indices;
+  }
+
+  function typewrite(text: string) {
+    if (!responseEl) return;
+    const token = ++typeToken;
+    responseEl.textContent = '';
+    if (cursorEl) cursorEl.style.display = 'inline';
+    if (reducedMotion) {
+      responseEl.textContent = text;
+      sfx.done();
+      return;
+    }
+    let i = 0;
+    function step() {
+      if (token !== typeToken || !responseEl) return;
+      if (i < text.length) {
+        responseEl.textContent += text[i];
+        if (text[i] !== ' ') sfx.type();
+        i += 1;
+        window.setTimeout(step, 14 + Math.random() * 26);
+      } else {
+        sfx.done();
+      }
+    }
+    step();
+  }
+
+  function render(index: number) {
+    const entry = SNARK_DB[index];
+    if (!entry || !setupEl || !categoryLabel || !garnishEl || !output) return;
+    currentIndex = index;
+    currentGarnish = pickGarnish();
+    categoryLabel.textContent = `It said · ${entry.category} · ${INTENSITY[intensity - 1].name}`;
+    setupEl.textContent = `"${entry.setup}"`;
+    garnishEl.textContent = '';
+    output.classList.toggle('nuclear', intensity === 5);
+    if (intensity === 5) sfx.nuclear();
+    typewrite(entry.snarkyResponse);
+    if (currentGarnish) {
+      const garnish = currentGarnish;
+      const token = typeToken; // typewrite() just incremented it; this render owns that token
+      window.setTimeout(() => {
+        if (garnishEl && typeToken === token && currentGarnish === garnish) {
+          garnishEl.textContent = garnish;
+        }
+      }, reducedMotion ? 100 : entry.snarkyResponse.length * 26 + 500);
+    }
+  }
+
+  function generate() {
+    sfx.click();
+    if (shuffleBag.length === 0) refillBag();
+    const next = shuffleBag.shift();
+    if (next === undefined) return;
+    render(next);
+    if (!hasGenerated) {
+      hasGenerated = true;
+      if (generateLabel) generateLabel.textContent = 'Again, Please';
+    }
+  }
+
+  generateBtn?.addEventListener('click', generate);
+
+  catButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      sfx.click();
+      activeCategory = btn.dataset.category ?? 'All';
+      shuffleBag = [];
+      catButtons.forEach((b) => {
+        const isActive = b === btn;
+        ACTIVE_CLASSES.forEach((c) => b.classList.toggle(c, isActive));
+        IDLE_CLASSES.forEach((c) => b.classList.toggle(c, !isActive));
+      });
+      generate();
+    });
+  });
+
+  intensitySlider?.addEventListener('input', () => {
+    intensity = Number(intensitySlider.value);
+    if (intensityLabel) {
+      intensityLabel.textContent = `${intensity} · ${INTENSITY[intensity - 1].name}`;
+      intensityLabel.classList.toggle('text-snarkpink', intensity >= 4);
+      intensityLabel.classList.toggle('text-lime', intensity < 4);
+    }
+    output?.classList.toggle('nuclear', intensity === 5 && currentIndex >= 0);
+  });
+
+  // ─── Toast ───
+  let toastEl: HTMLDivElement | null = null;
+  let toastTimer = 0;
+  function toast(message: string) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.setAttribute('role', 'status');
+      toastEl.style.cssText =
+        'position:fixed;bottom:96px;left:50%;transform:translateX(-50%);z-index:80;' +
+        'background:#18181B;border:1px solid #A3E635;color:#E4E4E7;padding:12px 20px;' +
+        'border-radius:12px;font-family:ui-monospace,monospace;font-size:13px;' +
+        'box-shadow:0 0 24px rgba(163,230,53,.25);opacity:0;transition:opacity .3s;' +
+        'pointer-events:none;max-width:90vw;text-align:center;';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = message;
+    requestAnimationFrame(() => {
+      if (toastEl) toastEl.style.opacity = '1';
+    });
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => {
+      if (toastEl) toastEl.style.opacity = '0';
+    }, 2200);
+  }
+
+  // ─── Steal Line ───
+  copyBtn?.addEventListener('click', async () => {
+    sfx.click();
+    const entry = SNARK_DB[currentIndex];
+    if (!entry) {
+      toast('Generate something first. There’s nothing to steal yet.');
+      return;
+    }
+    const text = `They said: "${entry.setup}"\nThe comeback you swallowed: ${entry.snarkyResponse}${currentGarnish ? `\n${currentGarnish}` : ''}\n— Snark™, because sincerity was getting exhausting`;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('Stolen successfully. We saw nothing.');
+    } catch {
+      toast('Clipboard said no. Even it has standards.');
+    }
+  });
+
+  // ─── Sound toggle ───
+  soundBtn?.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? '🔊 Sound: On' : '🔇 Sound: Off';
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+    if (soundOn) sfx.done();
+  });
+
+  // ─── Snark of the Day: same barb for everyone, all day. Solidarity. ───
+  const dayEl = document.getElementById('snark-of-day');
+  if (dayEl) {
+    const dayIndex = Math.floor(Date.now() / 86400000) % SNARK_DB.length;
+    const daily = SNARK_DB[dayIndex];
+    dayEl.textContent = `Snark of the Day — "${daily.setup}" → ${daily.snarkyResponse}`;
+  }
+</script>

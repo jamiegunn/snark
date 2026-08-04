@@ -1,0 +1,9 @@
+# Snark™ robots.txt
+# Even the crawlers deserve honesty.
+
+User-agent: *
+Allow: /
+Disallow: /sincerity        # gone since 2009, stop looking
+Disallow: /unsubscribe      # it works exactly as well as everyone else's
+
+# Crawl-delay: take your time. We're not excited either way.
